@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1457393980 source:c:\users\mitch\documents\github\dragonspineengine\main.cpp
+1457394183 source:c:\users\mitch\documents\github\dragonspineengine\main.cpp
 	"Debug.h"
 	"Game.h"
 
@@ -7,7 +7,7 @@
 
 1457393337 c:\users\mitch\documents\github\dragonspineengine\include\game.h
 
-1457393944 source:c:\users\mitch\documents\github\dragonspineengine\src\debug.cpp
+1457394341 source:c:\users\mitch\documents\github\dragonspineengine\src\debug.cpp
 	"Debug.h"
 	<stdio.h>
 
