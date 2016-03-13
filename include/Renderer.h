@@ -14,6 +14,8 @@ namespace DragonSpineGameEngine {
             void testWindow();
             void openWindow();
             void closeWindow();
+
+            void render();
         protected:
 
         private:

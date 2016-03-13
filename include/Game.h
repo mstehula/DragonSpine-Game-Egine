@@ -17,6 +17,7 @@ namespace DragonSpineGameEngine {
         protected:
 
         private:
+            bool running = false;
             void run();
     };
 

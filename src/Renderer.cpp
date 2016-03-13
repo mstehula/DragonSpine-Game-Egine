@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "Renderer.h"
 #include "Debug.h"
@@ -60,12 +61,6 @@ namespace DragonSpineGameEngine {
 
     void Renderer::openWindow()
     {
-        if(window != nullptr)
-        {
-            error("Window already opened - not creating another till closed\n");
-            return;
-        }
-
         window = glfwCreateWindow(640, 480, "Simple Example", NULL, NULL);
 
         if(!window)
@@ -80,13 +75,14 @@ namespace DragonSpineGameEngine {
 
     void Renderer::closeWindow()
     {
-        if(window == NULL)
-        {
-            error("Cannot close window - already closed\n");
-            return;
-        }
-
         glfwDestroyWindow(window);
+    }
+
+    void Renderer::render()
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+        glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 
 }
