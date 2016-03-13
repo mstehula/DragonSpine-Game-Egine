@@ -9,10 +9,15 @@ namespace DragonSpineGameEngine {
             Game();
             virtual ~Game();
 
-            void run();
+            void start();
+            void stop();
+
+            void tick();
+            void render();
         protected:
 
         private:
+            void run();
     };
 
 }

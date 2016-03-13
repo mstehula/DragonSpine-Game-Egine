@@ -3,19 +3,23 @@
 
 #include <GLFW/glfw3.h>
 
+namespace DragonSpineGameEngine {
 
-class Renderer
-{
-    public:
-        Renderer();
-        virtual ~Renderer();
+    class Renderer
+    {
+        public:
+            Renderer();
+            virtual ~Renderer();
 
-        void testWindow();
-        void openWindow();
-    protected:
+            void testWindow();
+            void openWindow();
+            void closeWindow();
+        protected:
 
-    private:
-        GLFWwindow* window;
-};
+        private:
+            GLFWwindow* window;
+    };
+
+}
 
 #endif // RENDERER_H

@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Renderer.h"
 
 namespace DragonSpineGameEngine {
 
@@ -12,9 +13,29 @@ namespace DragonSpineGameEngine {
         //dtor
     }
 
-    void Game::run()
+    void Game::start()
+    {
+        run();
+    }
+
+    void Game::stop()
     {
 
     }
 
+    void Game::run()
+    {
+        Renderer renderer;
+        renderer.testWindow();
+    }
+
+    void Game::tick()
+    {
+
+    }
+
+    void Game::render()
+    {
+
+    }
 }

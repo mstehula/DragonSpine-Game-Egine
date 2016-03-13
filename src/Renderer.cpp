@@ -3,62 +3,90 @@
 #include "Renderer.h"
 #include "Debug.h"
 
-using namespace DragonSpineGameEngine;
+namespace DragonSpineGameEngine {
 
-Renderer::Renderer()
-{
-    if(!glfwInit())
+    Renderer::Renderer()
     {
-        error("Cannot init glfw, exiting\n");
-        exit(EXIT_FAILURE);
+        if(!glfwInit())
+        {
+            error("Cannot init glfw, exiting\n");
+            exit(EXIT_FAILURE);
+        }
     }
-}
 
-Renderer::~Renderer()
-{
-    glfwTerminate();
-}
-
-void Renderer::testWindow()
-{
-    window = glfwCreateWindow(640, 480, "Simple Example", NULL, NULL);
-
-    if(!window)
+    Renderer::~Renderer()
     {
         glfwTerminate();
-        exit(EXIT_FAILURE);
     }
 
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
-
-    while(!glfwWindowShouldClose(window))
+    void Renderer::testWindow()
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        window = glfwCreateWindow(640, 480, "Simple Example", NULL, NULL);
 
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(-(640/480.0), (640/480.0), -1.0f, 1.0f, 1.0f, -1.0f);
+        if(!window)
+        {
+            glfwTerminate();
+            exit(EXIT_FAILURE);
+        }
 
-        glMatrixMode(GL_MODELVIEW);
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(1);
 
-        glBegin(GL_TRIANGLES);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex3f(-0.6f, -0.4f, 0.0f);
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex3f(0.6f, -0.4f, 0.0f);
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex3f(0.0f, 0.6f, 0.0f);
-        glEnd();
+        while(!glfwWindowShouldClose(window))
+        {
+            glClear(GL_COLOR_BUFFER_BIT);
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-(640/480.0), (640/480.0), -1.0f, 1.0f, 1.0f, -1.0f);
+
+            glMatrixMode(GL_MODELVIEW);
+
+            glBegin(GL_TRIANGLES);
+            glColor3f(1.0f, 0.0f, 0.0f);
+            glVertex3f(-0.6f, -0.4f, 0.0f);
+            glColor3f(0.0f, 1.0f, 0.0f);
+            glVertex3f(0.6f, -0.4f, 0.0f);
+            glColor3f(0.0f, 0.0f, 1.0f);
+            glVertex3f(0.0f, 0.6f, 0.0f);
+            glEnd();
+
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+        }
+
+        glfwDestroyWindow(window);
     }
 
-    glfwDestroyWindow(window);
-}
+    void Renderer::openWindow()
+    {
+        if(window != nullptr)
+        {
+            error("Window already opened - not creating another till closed\n");
+            return;
+        }
 
-void Renderer::openWindow()
-{
+        window = glfwCreateWindow(640, 480, "Simple Example", NULL, NULL);
+
+        if(!window)
+        {
+            glfwTerminate();
+            exit(EXIT_FAILURE);
+        }
+
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(1);
+    }
+
+    void Renderer::closeWindow()
+    {
+        if(window == NULL)
+        {
+            error("Cannot close window - already closed\n");
+            return;
+        }
+
+        glfwDestroyWindow(window);
+    }
 
 }
