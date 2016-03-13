@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <GLFW/glfw3.h>
+
 #include "Renderer.h"
 #include "Debug.h"
 
@@ -8,20 +10,18 @@ namespace DragonSpineGameEngine {
 
     Renderer::Renderer()
     {
-        if(!glfwInit())
-        {
-            error("Cannot init glfw, exiting\n");
-            exit(EXIT_FAILURE);
-        }
+
     }
 
     Renderer::~Renderer()
     {
+        debug("Renderer - deconstructor\n");
         glfwTerminate();
     }
 
     void Renderer::testWindow()
     {
+        debug("Renderer - Test window\n");
         window = glfwCreateWindow(640, 480, "Simple Example", NULL, NULL);
 
         if(!window)
@@ -82,7 +82,6 @@ namespace DragonSpineGameEngine {
     {
         glClear(GL_COLOR_BUFFER_BIT);
         glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
 }

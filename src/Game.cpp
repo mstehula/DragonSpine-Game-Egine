@@ -1,15 +1,25 @@
 
+#include <stdio.h>
+#include <stdlib.h>
 
+#include <GLFW/glfw3.h>
 
 #include "Debug.h"
 #include "Game.h"
+#include "Input.h"
 #include "Renderer.h"
 
 namespace DragonSpineGameEngine {
 
     Game::Game()
     {
-        //ctor
+        debug("Game - constructor\n");
+        if(!glfwInit())
+        {
+            error("Cannot init glfw, exiting\n");
+            exit(EXIT_FAILURE);
+        }
+        debug("Game - constructor complete\n");
     }
 
     Game::~Game()
@@ -35,24 +45,38 @@ namespace DragonSpineGameEngine {
 
     void Game::run()
     {
-        Renderer renderer;
         //renderer.testWindow();
 
-        renderer.openWindow();
+        time.update();
+
+        //renderer.openWindow();
         while(running)
         {
-            renderer.render();
+            bool canTick;
+
+            char* buffer;
+            sprintf(buffer, "%u\n", (long) (time.getDelta()));
+            debug(buffer);
+            //tick();
+
+
+
+            if(canTick)
+            {
+                //tick();
+                canTick = false;
+            }
         }
-        renderer.closeWindow();
+        //renderer.closeWindow();
     }
 
     void Game::tick()
     {
-
+        input.update();
     }
 
     void Game::render()
     {
-
+        renderer.render();
     }
 }

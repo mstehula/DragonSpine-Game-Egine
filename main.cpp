@@ -2,10 +2,10 @@
 #include "Debug.h"
 #include "Game.h"
 
-#define WIDTH 800
-#define HEIGHT 600
-
 using namespace DragonSpineGameEngine;
+
+int kWidth = 640;
+int kHeight = 480;
 
 int main()
 {
