@@ -12,7 +12,7 @@ namespace DragonSpineGameEngine {
 
     //Prints out char* output if debug_level is less then the current
     //game debug_level
-    void debug(char* output, int debug_level)
+    void debug(const char* output, int debug_level)
     {
         if(debug_level <= game_debug_level)
         {
@@ -22,7 +22,7 @@ namespace DragonSpineGameEngine {
     }
 
     //Prints out the char* output to stderr
-    void error(char* output)
+    void error(const char* output)
     {
         fprintf(stderr, output);
     }

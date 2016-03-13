@@ -8,8 +8,8 @@ namespace DragonSpineGameEngine {
     const int DEBUG_ADVISORY = 3;
     const int DEBUG_ALL = 4;
 
-    void debug(char* output, int debug_level = 4);
-    void error(char* output);
+    void debug(const char* output, int debug_level = 4);
+    void error(const char* output);
 
     void setDebugLevel(int debug_level);
 
