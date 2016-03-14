@@ -5,11 +5,9 @@
 
 namespace DragonSpineGameEngine {
 
-    const long kSecond = 1000000;
-
     Time::Time()
     {
-        last = (long) (glfwGetTime() * kSecond);
+        now = glfwGetTime();
     }
 
     Time::~Time()
@@ -17,21 +15,18 @@ namespace DragonSpineGameEngine {
         //dtor
     }
 
-    void Time::update()
+    Time Time::update()
+    //Updates time standings
     {
-        now = (long) (glfwGetTime() * kSecond);
-        delta = now - last;
-        last = now;
+        now = glfwGetTime();
+
+        return *this;
     }
 
-    long Time::getTime()
+    double Time::getTime()
+    //Returns the time since the start of glfw or since int in setTime(int)
     {
         return now;
-    }
-
-    long Time::getDelta()
-    {
-        return delta;
     }
 
 }

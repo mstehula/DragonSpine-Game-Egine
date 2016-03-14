@@ -9,6 +9,8 @@
 #include "Input.h"
 #include "Renderer.h"
 
+using namespace DragonSpineGameEngine;
+
 namespace DragonSpineGameEngine {
 
     Game::Game()
@@ -46,28 +48,50 @@ namespace DragonSpineGameEngine {
     void Game::run()
     {
         //renderer.testWindow();
+        debug("run\n");
 
-        time.update();
+        const int kFramePerSecond = 20;
+        const float kGameSkipTicks = 1.0f/kFramePerSecond;
+        const float kFPSSkipTicks = 1.0f;
+        const int kMaxFrameskip = 5;
 
-        //renderer.openWindow();
+        double next_game_tick = time.update().getTime();
+        double next_fps_tick = time.getTime();
+        int loops;
+        float interpolation;
+
+        int frames = 0;
+        int ticks = 0;
+
+        renderer.openWindow();
         while(running)
         {
-            bool canTick;
+            char buffer[100];
 
-            char* buffer;
-            sprintf(buffer, "%u\n", (long) (time.getDelta()));
-            debug(buffer);
-            //tick();
-
-
-
-            if(canTick)
+            loops = 0;
+            while(time.update().getTime() > next_game_tick && loops < kMaxFrameskip)
             {
                 //tick();
-                canTick = false;
+                ticks++;
+                loops++;
+                next_game_tick += kGameSkipTicks;
             }
+
+            if(time.update().getTime() > next_fps_tick)
+            {
+                sprintf(buffer, "%d %d\n", frames, ticks);
+                debug(buffer);
+                frames = 0;
+                ticks = 0;
+                next_fps_tick += kFPSSkipTicks;
+            }
+
+            //Interpolation is how much of a second has passed by since the last render tick;
+            interpolation = (float) ((time.update().getTime() + kGameSkipTicks - next_game_tick) / kGameSkipTicks);
+            //render();
+            frames++;
         }
-        //renderer.closeWindow();
+        renderer.closeWindow();
     }
 
     void Game::tick()

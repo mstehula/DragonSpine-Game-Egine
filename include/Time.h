@@ -10,15 +10,12 @@ namespace DragonSpineGameEngine {
             Time();
             virtual ~Time();
 
-            void update();
-            long getTime();
-            long getDelta();
+            Time update();
+            double getTime();
         protected:
 
         private:
-            long last;
-            long now;
-            long delta;
+            double now;
     };
 
 }
