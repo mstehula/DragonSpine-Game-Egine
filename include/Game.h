@@ -1,18 +1,15 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "Engine.h"
 #include "Input.h"
 #include "Renderer.h"
-#include "Time.h"
 
-namespace DragonSpineGameEngine {
+namespace dragonspinegameengine {
 
     class Game
     {
         public:
-            Game();
-            virtual ~Game();
-
             void start();
             void stop();
 
@@ -26,7 +23,6 @@ namespace DragonSpineGameEngine {
 
             Renderer renderer;
             Input input;
-            Time time;
     };
 
 }

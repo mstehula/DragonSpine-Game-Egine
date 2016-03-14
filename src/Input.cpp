@@ -1,7 +1,7 @@
 #include "Input.h"
 
 
-namespace DragonSpineGameEngine {
+namespace dragonspinegameengine {
 
     Input::Input()
     {

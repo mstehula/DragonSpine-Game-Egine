@@ -4,30 +4,11 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Debug.h"
 #include "Game.h"
 #include "Input.h"
 #include "Renderer.h"
 
-using namespace DragonSpineGameEngine;
-
-namespace DragonSpineGameEngine {
-
-    Game::Game()
-    {
-        debug("Game - constructor\n");
-        if(!glfwInit())
-        {
-            error("Cannot init glfw, exiting\n");
-            exit(EXIT_FAILURE);
-        }
-        debug("Game - constructor complete\n");
-    }
-
-    Game::~Game()
-    {
-        //dtor
-    }
+namespace dragonspinegameengine {
 
     void Game::start()
     //To prevent starting again, use a boolean switch that
@@ -48,15 +29,14 @@ namespace DragonSpineGameEngine {
     void Game::run()
     {
         //renderer.testWindow();
-        debug("run\n");
 
         const int kFramePerSecond = 20;
         const float kGameSkipTicks = 1.0f/kFramePerSecond;
         const float kFPSSkipTicks = 1.0f;
         const int kMaxFrameskip = 5;
 
-        double next_game_tick = time.update().getTime();
-        double next_fps_tick = time.getTime();
+        double next_game_tick = getTime();
+        double next_fps_tick = getTime();
         int loops;
         float interpolation;
 
@@ -69,7 +49,7 @@ namespace DragonSpineGameEngine {
             char buffer[100];
 
             loops = 0;
-            while(time.update().getTime() > next_game_tick && loops < kMaxFrameskip)
+            while(getTime() > next_game_tick && loops < kMaxFrameskip)
             {
                 //tick();
                 ticks++;
@@ -77,18 +57,18 @@ namespace DragonSpineGameEngine {
                 next_game_tick += kGameSkipTicks;
             }
 
-            if(time.update().getTime() > next_fps_tick)
+            if(getTime() > next_fps_tick)
             {
-                sprintf(buffer, "%d %d\n", frames, ticks);
-                debug(buffer);
+                debug_buffer(kDebugAll, "FPS:[%d] TPS:[%d]\n", frames, ticks);
                 frames = 0;
                 ticks = 0;
                 next_fps_tick += kFPSSkipTicks;
             }
 
             //Interpolation is how much of a second has passed by since the last render tick;
-            interpolation = (float) ((time.update().getTime() + kGameSkipTicks - next_game_tick) / kGameSkipTicks);
+            interpolation = (float) ((getTime() + kGameSkipTicks - next_game_tick) / kGameSkipTicks);
             //render();
+
             frames++;
         }
         renderer.closeWindow();

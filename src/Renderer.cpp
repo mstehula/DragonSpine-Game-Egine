@@ -4,24 +4,13 @@
 #include <GLFW/glfw3.h>
 
 #include "Renderer.h"
-#include "Debug.h"
+#include "Engine.h"
 
-namespace DragonSpineGameEngine {
-
-    Renderer::Renderer()
-    {
-
-    }
-
-    Renderer::~Renderer()
-    {
-        debug("Renderer - deconstructor\n");
-        glfwTerminate();
-    }
+namespace dragonspinegameengine {
 
     void Renderer::testWindow()
     {
-        debug("Renderer - Test window\n");
+        debug(kDebugAll, "Renderer - Test window\n");
         window = glfwCreateWindow(640, 480, "Simple Example", NULL, NULL);
 
         if(!window)
