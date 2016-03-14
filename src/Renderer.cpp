@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "Renderer.h"
@@ -8,21 +9,21 @@
 
 namespace dragonspinegameengine {
 
-    void Renderer::testWindow()
+    void Renderer::TestWindow()
     {
-        debug(kDebugAll, "Renderer - Test window\n");
-        window = glfwCreateWindow(640, 480, "Simple Example", NULL, NULL);
+        debug(kDebugAll, "Renderer - Test window");
+        window_ = glfwCreateWindow(640, 480, "Simple Example", NULL, NULL);
 
-        if(!window)
+        if(!window_)
         {
             glfwTerminate();
             exit(EXIT_FAILURE);
         }
 
-        glfwMakeContextCurrent(window);
+        glfwMakeContextCurrent(window_);
         glfwSwapInterval(1);
 
-        while(!glfwWindowShouldClose(window))
+        while(!glfwWindowShouldClose(window_))
         {
             glClear(GL_COLOR_BUFFER_BIT);
 
@@ -41,36 +42,38 @@ namespace dragonspinegameengine {
             glVertex3f(0.0f, 0.6f, 0.0f);
             glEnd();
 
-            glfwSwapBuffers(window);
+            glfwSwapBuffers(window_);
             glfwPollEvents();
         }
 
-        glfwDestroyWindow(window);
+        glfwDestroyWindow(window_);
     }
 
-    void Renderer::openWindow()
+    void Renderer::OpenWindow()
     {
-        window = glfwCreateWindow(640, 480, "Simple Example", NULL, NULL);
+        window_ = glfwCreateWindow(640, 480, "Simple Example", NULL, NULL);
 
-        if(!window)
+        if(!window_)
         {
             glfwTerminate();
             exit(EXIT_FAILURE);
         }
 
-        glfwMakeContextCurrent(window);
+        glfwMakeContextCurrent(window_);
         glfwSwapInterval(1);
+
+        printf("%s\n", glGetString(GL_VERSION));
     }
 
-    void Renderer::closeWindow()
+    void Renderer::CloseWindow()
     {
-        glfwDestroyWindow(window);
+        glfwDestroyWindow(window_);
     }
 
-    void Renderer::render()
+    void Renderer::Render()
     {
         glClear(GL_COLOR_BUFFER_BIT);
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(window_);
     }
 
 }

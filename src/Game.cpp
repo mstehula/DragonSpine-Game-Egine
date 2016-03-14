@@ -43,7 +43,7 @@ namespace dragonspinegameengine {
         int frames = 0;
         int ticks = 0;
 
-        renderer.openWindow();
+        renderer.OpenWindow();
         while(running)
         {
             char buffer[100];
@@ -71,7 +71,7 @@ namespace dragonspinegameengine {
 
             frames++;
         }
-        renderer.closeWindow();
+        renderer.CloseWindow();
     }
 
     void Game::tick()
@@ -81,6 +81,6 @@ namespace dragonspinegameengine {
 
     void Game::render()
     {
-        renderer.render();
+        renderer.Render();
     }
 }

@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <GL/gl.h>
 #include <GLFW/glfw3.h>
 
 #include "Engine.h"
@@ -27,6 +28,8 @@ namespace dragonspinegameengine {
 
         debug(kDebugAll, "Engine spinning down");
         debug(kDebugCritical, "Thank you for using the DragonSpine Game Engine");
+
+        glfwTerminate();
 
         return 0;
     }
