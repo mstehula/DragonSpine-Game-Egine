@@ -19,14 +19,14 @@ namespace dragonspinegameengine {
             perror("Error initializing GLFW, exiting swiftly\n");
         }
 
-        debug(kDebugCritical, "Welcome to the DragonSpine Game Engine\n");
-        debug(kDebugAll, "Starting...\n");
+        debug(kDebugCritical, "Welcome to the DragonSpine Game Engine");
+        debug(kDebugAll, "Starting...");
 
         Game game;
         game.start();
 
-        debug(kDebugAll, "Engine spinning down\n");
-        debug(kDebugCritical, "Thank you for using the DragonSpine Game Engine\n");
+        debug(kDebugAll, "Engine spinning down");
+        debug(kDebugCritical, "Thank you for using the DragonSpine Game Engine");
 
         return 0;
     }
@@ -50,7 +50,7 @@ namespace dragonspinegameengine {
     {
         if(debug_level <= game_debug_level)
         {
-            fprintf(stdout, "[%c][%f] %s", kDebugSymbolTable[debug_level], getTime(), output);
+            fprintf(stdout, "[%c][%f] %s\n", kDebugSymbolTable[debug_level], getTime(), output);
         }
     }
 
@@ -60,6 +60,7 @@ namespace dragonspinegameengine {
         va_start(argptr, format);
         fprintf(stdout, "[%c][%f] ", kDebugSymbolTable[debug_level], getTime());
         vfprintf(stdout, format, argptr);
+        fprintf(stdout, "\n");
         va_end(argptr);
     }
 

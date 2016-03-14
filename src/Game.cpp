@@ -59,7 +59,7 @@ namespace dragonspinegameengine {
 
             if(getTime() > next_fps_tick)
             {
-                debug_buffer(kDebugAll, "FPS:[%d] TPS:[%d]\n", frames, ticks);
+                debug_buffer(kDebugAll, "FPS:[%d] TPS:[%d]", frames, ticks);
                 frames = 0;
                 ticks = 0;
                 next_fps_tick += kFPSSkipTicks;
