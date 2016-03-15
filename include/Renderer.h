@@ -112,6 +112,9 @@ namespace dragonspinegameengine {
     {
         public:
             Mesh();
+
+            void AddVertices(Vertex* vertices, int vertices_size, int* indices, int indices_size);
+            void Draw();
         private:
             int vertices_buffer_object_;
             int indices_buffer_object_;

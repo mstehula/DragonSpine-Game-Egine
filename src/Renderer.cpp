@@ -76,4 +76,12 @@ namespace dragonspinegameengine {
         glfwSwapBuffers(window_);
     }
 
+    Mesh::Mesh()
+    {
+        GLuint buffers[2];
+        glGenBuffers(2, buffers);
+        vertices_buffer_object_ = buffers[0];
+        indices_buffer_object_ = buffers[1];
+    }
+
 }
