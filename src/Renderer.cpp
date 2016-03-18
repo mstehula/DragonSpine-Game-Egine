@@ -104,7 +104,7 @@ namespace dragonspinegameengine {
     }
 
     Vertex::~Vertex()
-    {'
+    {
     }
 
     vec4 Vertex::GetPos()
