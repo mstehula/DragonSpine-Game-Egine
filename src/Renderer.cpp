@@ -2,16 +2,16 @@
 #include <stdio.h>
 #include <math.h>
 
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <GLM/mat4x4.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include "Renderer.h"
 #include "Engine.h"
-
-using namespace glm;
 
 namespace dragonspinegameengine {
 
@@ -88,6 +88,10 @@ namespace dragonspinegameengine {
         glBindVertexArray(VertexArrayID);
 
         glfwSetInputMode(window_, GLFW_STICKY_KEYS, GL_TRUE);
+        glClearColor(.2f, .2f, .2f, 1.0f);
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
     }
 
     void Renderer::Render()
@@ -98,42 +102,31 @@ namespace dragonspinegameengine {
         glfwSwapBuffers(window_);
     }
 
-    Vertex::Vertex(vec3 pos)
+    Vertex::Vertex(glm::vec3 pos)
     {
-        pos_ = vec4(pos.x, pos.y, pos.z, 1.0f);
+        pos_ = glm::vec4(pos.x, pos.y, pos.z, 1.0f);
     }
 
     Vertex::~Vertex()
     {
     }
 
-    vec4 Vertex::GetPos()
+    glm::vec4 Vertex::GetPos()
     {
         return pos_;
     }
 
-    void Vertex::SetPos(vec3 pos)
+    void Vertex::SetPos(glm::vec3 pos)
     {
-        pos_ = vec4(pos.x, pos.y, pos.z, 1.0f);
+        pos_ = glm::vec4(pos.x, pos.y, pos.z, 1.0f);
     }
 
-    Mesh::Mesh()
+    void Mesh::AddVertices(GLfloat* vertex_buffer_data, int vertex_buffer_data_size)
     {
-
-    }
-
-    void Mesh::AddVertices()
-    {
-        const GLfloat vertex_buffer_data[] =
-        {
-            -0.8f, -0.4f, 0.0f,
-            0.8f, -0.4f, 0.0f,
-            0.0f, 0.4f, 0.0f
-        };
-
+        vertex_buffer_size_ = vertex_buffer_data_size;
         glGenBuffers(1, &vertex_buffer_);
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data_size, vertex_buffer_data, GL_STATIC_DRAW);
     }
 
     void Mesh::Draw()
@@ -141,17 +134,68 @@ namespace dragonspinegameengine {
         glEnableVertexAttribArray(0);
 
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
-        glVertexAttribPointer(
-            0,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            0,
-            0
-        );
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+        glDrawArrays(GL_TRIANGLES, 0, vertex_buffer_size_/sizeof(GL_FLOAT));
 
         glDisableVertexAttribArray(0);
     }
 
+    RenderableObject::RenderableObject()
+    {
+        translation_matrix_ = glm::mat4x4(1.0f);
+        rotation_matrix_ = glm::mat4x4(1.0f);
+        scale_matrix_ = glm::mat4x4(1.0f);
+        mesh_ = new Mesh();
+    }
+
+    RenderableObject::RenderableObject(glm::vec3 pos, glm::vec3 rot, glm::vec3 scale)
+    {
+        mesh_ = new Mesh();
+        SetPosition(pos);
+        SetRotation(rot);
+        SetScale(scale);
+    }
+
+    void RenderableObject::SetPosition(glm::vec3 pos)
+    {
+        translation_matrix_ = glm::translate(pos);
+        CalculateModelMatrix();
+    }
+
+    void RenderableObject::SetRotation(glm::vec3 rot)
+    {
+        glm::mat4x4 rx = glm::rotate(rot.x, glm::vec3(1.0,0.0,0.0));
+        glm::mat4x4 ry = glm::rotate(rot.y, glm::vec3(0.0,1.0,0.0));
+        glm::mat4x4 rz = glm::rotate(rot.z, glm::vec3(0.0,0.0,1.0));
+
+        rotation_matrix_ = rz * ry * rx;
+        CalculateModelMatrix();
+    }
+
+    void RenderableObject::SetScale(glm::vec3 scale)
+    {
+        scale_matrix_ = glm::scale(scale);
+        CalculateModelMatrix();
+    }
+
+    glm::mat4x4 RenderableObject::GetModelMatrix()
+    {
+        return model_matrix_;
+    }
+
+    void RenderableObject::CalculateModelMatrix()
+    {
+        model_matrix_ = translation_matrix_ * rotation_matrix_ * scale_matrix_;
+    }
+
+    Mesh* RenderableObject::GetMesh()
+    {
+        return mesh_;
+    }
+
+    void RenderableObject::Render()
+    {
+        Engine::GetBasicShader()->SetModelMatrix(GetModelMatrix());
+        GetMesh()->Draw();
+    }
 }

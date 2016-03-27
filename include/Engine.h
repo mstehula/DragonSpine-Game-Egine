@@ -13,29 +13,27 @@ namespace dragonspinegameengine {
     {
         public:
             static Engine* GetInstance();
+            static Shader* GetBasicShader();
 
             void start();
             void stop();
 
             void tick();
             void render();
+
+            void exit();
         protected:
 
         private:
             static Engine* instance_;
-            Mesh* test_mesh_;
-            Shader* test_shader_;
+            static Shader* shader_;
+            RenderableObject* obj1_;
+            RenderableObject* obj2_;
             Renderer renderer;
             Input input;
 
             bool running = false;
             void run();
-    };
-
-    class Util
-    {
-        public:
-            static void CreateVertexPosArray(Vertex* vertices, int vertices_size, GLfloat** vertex_buffer, int* vertex_buffer_size);
     };
 
     class ResourceLoader

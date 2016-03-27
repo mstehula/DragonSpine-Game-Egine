@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 
 #include <glm/vec3.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "Engine.h"
 #include "Renderer.h"
@@ -17,19 +18,12 @@ namespace dragonspinegameengine {
 
     int entry(int argc, char** argv)
     {
-/*        if(!glfwInit())
-        {
-            glfwTerminate();
-            perror("Error initializing GLFW, exiting swiftly\n");
-            exit(EXIT_FAILURE);
-        }
-*/
-        debug(3, "GLFW and GLEW initiailzed");
-
         debug(kDebugCritical, "Welcome to the DragonSpine Game Engine");
         debug(kDebugAll, "Starting...");
 
         Engine::GetInstance()->start();
+        Engine::GetInstance()->exit();
+        delete Engine::GetInstance();
 
         debug(kDebugAll, "Engine spinning down");
         debug(kDebugCritical, "Thank you for using the DragonSpine Game Engine");
@@ -40,6 +34,7 @@ namespace dragonspinegameengine {
     }
 
     Engine* Engine::instance_ = 0;
+    Shader* Engine::shader_ = 0;
 
     Engine* Engine::GetInstance()
     {
@@ -48,6 +43,15 @@ namespace dragonspinegameengine {
             Engine::instance_ = new Engine();
         }
         return instance_;
+    }
+
+    Shader* Engine::GetBasicShader()
+    {
+        if(Engine::shader_ == nullptr)
+        {
+            Engine::shader_ = new Shader();
+        }
+        return shader_;
     }
 
     void Engine::start()
@@ -66,9 +70,11 @@ namespace dragonspinegameengine {
         running = false;
     }
 
+    float rotation = 0;
+
     void Engine::run()
     {
-        const int ticks_per_second = 20;
+        const int ticks_per_second = 100;
         const float game_skip_ticks = 1.0f/ticks_per_second;
         const float fps_skip_ticks = 1.0f;
         const int max_frame_skips = 5;
@@ -83,12 +89,56 @@ namespace dragonspinegameengine {
 
         renderer.InitWindow();
 
-        test_mesh_ = new Mesh();
-        test_mesh_->AddVertices();
+        GLfloat vertex_buffer_data1[] =
+        {
+            -1.0f,-1.0f,-1.0f, // triangle 1 : begin
+            -1.0f,-1.0f, 1.0f,
+            -1.0f, 1.0f, 1.0f, // triangle 1 : end
+            1.0f, 1.0f,-1.0f, // triangle 2 : begin
+            -1.0f,-1.0f,-1.0f,
+            -1.0f, 1.0f,-1.0f, // triangle 2 : end
+            1.0f,-1.0f, 1.0f,
+            -1.0f,-1.0f,-1.0f,
+            1.0f,-1.0f,-1.0f,
+            1.0f, 1.0f,-1.0f,
+            1.0f,-1.0f,-1.0f,
+            -1.0f,-1.0f,-1.0f,
+            -1.0f,-1.0f,-1.0f,
+            -1.0f, 1.0f, 1.0f,
+            -1.0f, 1.0f,-1.0f,
+            1.0f,-1.0f, 1.0f,
+            -1.0f,-1.0f, 1.0f,
+            -1.0f,-1.0f,-1.0f,
+            -1.0f, 1.0f, 1.0f,
+            -1.0f,-1.0f, 1.0f,
+            1.0f,-1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f,-1.0f,-1.0f,
+            1.0f, 1.0f,-1.0f,
+            1.0f,-1.0f,-1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f,-1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f,-1.0f,
+            -1.0f, 1.0f,-1.0f,
+            1.0f, 1.0f, 1.0f,
+            -1.0f, 1.0f,-1.0f,
+            -1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            -1.0f, 1.0f, 1.0f,
+            1.0f,-1.0f, 1.0f
+        };
 
-        test_shader_ = new Shader();
-        test_shader_->AddVertexShader("resources/shaders/basicVertex.vs");
-        test_shader_->AddFragmentShader("resources/shaders/basicFragment.fs");
+        debug(3, "vertex buffer data size %d", sizeof(vertex_buffer_data1));
+
+        obj1_ = new RenderableObject(glm::vec3(0.0,0.0,0.0), glm::vec3(0.0,0.0,0.0), glm::vec3(1,1,1));
+        obj1_->GetMesh()->AddVertices(vertex_buffer_data1, sizeof(vertex_buffer_data1));
+
+        GetBasicShader()->AddVertexShader("resources/shaders/basicVertex.vs");
+        GetBasicShader()->AddFragmentShader("resources/shaders/basicFragment.fs");
+        GetBasicShader()->CompileShader();
+        GetBasicShader()->SetPerspectiveMatrix(glm::perspective(glm::radians(90.0f), (float) (1024 / 768), 0.1f, 100.0f));
+        GetBasicShader()->SetViewMatrix(glm::lookAt(glm::vec3(40,3,3), glm::vec3(0,0,0), glm::vec3(0,1,0)));
 
         while(running)
         {
@@ -118,24 +168,26 @@ namespace dragonspinegameengine {
 
     void Engine::tick()
     {
+        rotation += .01;
+        obj1_->SetRotation(glm::vec3(rotation, rotation, 0.0f));
         glfwPollEvents();
     }
 
     void Engine::render()
     {
-        test_shader_->Bind();
-        test_mesh_->Draw();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        GetBasicShader()->Bind();
+        GetBasicShader()->SetPerspectiveMatrix(glm::perspective(glm::radians(90.0f), (float) (1024 / 768), 0.1f, 100.0f));
+        GetBasicShader()->SetViewMatrix(glm::lookAt(glm::vec3(4,3,3), glm::vec3(0,0,0), glm::vec3(0,1,0)));
+        obj1_->Render();
         renderer.Render();
     }
 
-    void Util::CreateVertexPosArray(Vertex* vertices, int vertices_size, GLfloat** vertex_buffer, int* vertex_buffer_size)
+    void Engine::exit()
     {
-        for(int i = 0; i < vertices_size; i+=1)
-        {
-            *vertex_buffer[i*Vertex::kSize] = vertices[i].GetPos().x;
-            *vertex_buffer[i*Vertex::kSize+1] = vertices[i].GetPos().y;
-            *vertex_buffer[i*Vertex::kSize+2] = vertices[i].GetPos().z;
-        }
+        delete shader_;
+        delete obj1_;
+        delete obj2_;
     }
 
     void ResourceLoader::LoadShader(const char* shader_filename, char** shader_file, int* shader_file_size)

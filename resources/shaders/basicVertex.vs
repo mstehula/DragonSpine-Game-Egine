@@ -1,8 +1,15 @@
 #version 330
 
-layout (location = 0) in vec3 position;
+layout (location = 0) in vec4 position;
+
+uniform mat4 model_matrix = mat4(1.0f);
+uniform mat4 world_matrix = mat4(1.0f);
+uniform mat4 perspective_matrix = mat4(1.0f);
+
+out vec4 color_;
 
 void main()
 {
-  gl_Position = vec4(position, 1.0);
+    color_ = position;
+    gl_Position = perspective_matrix * world_matrix * model_matrix * position;
 }
