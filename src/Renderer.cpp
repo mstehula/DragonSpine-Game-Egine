@@ -96,6 +96,8 @@ namespace dragonspinegameengine {
 
     void Renderer::Render()
     {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         if(glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(window_) == GL_TRUE)
                 Engine::GetInstance()->stop();
 

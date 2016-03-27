@@ -175,7 +175,6 @@ namespace dragonspinegameengine {
 
     void Engine::render()
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         GetBasicShader()->Bind();
         GetBasicShader()->SetPerspectiveMatrix(glm::perspective(glm::radians(90.0f), (float) (1024 / 768), 0.1f, 100.0f));
         GetBasicShader()->SetViewMatrix(glm::lookAt(glm::vec3(4,3,3), glm::vec3(0,0,0), glm::vec3(0,1,0)));
