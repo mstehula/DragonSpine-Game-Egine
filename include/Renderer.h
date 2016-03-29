@@ -16,8 +16,31 @@ namespace dragonspinegameengine {
             void InitWindow();
 
             void Render();
+            void ClearWindow();
         private:
             GLFWwindow* window_;
+    };
+
+    class Camera
+    {
+        public:
+            Camera();
+
+            static Camera* GetCamera();
+
+            void SetPosition(glm::vec3 r);
+            void SetRotation(glm::vec3 r);
+
+            void CalculateViewMatrix();
+            glm::mat4x4 GetViewMatrix();
+        private:
+            glm::vec3 camera_pos_ = glm::vec3(0.0f, 0.0f, 0.0f);
+            glm::vec3 camera_front_ = glm::vec3(0.0f, 0.0f, -1.0f);
+            glm::vec3 camera_up_ = glm::vec3(0.0f, 1.0f, 0.0f);
+
+            glm::mat4x4 translation_matrix_;
+            glm::mat4x4 rotation_matrix_;
+            glm::mat4x4 view_matrix_;
     };
 
     class Vertex
@@ -36,13 +59,14 @@ namespace dragonspinegameengine {
     class Mesh
     {
         public:
-            void AddVertices(GLfloat* vertex_buffer_data, int vertex_buffer_data_size);
+            void AddVertices(GLfloat* vertex_buffer_data, int vertex_buffer_data_size, int* index_buffer_data, int index_buffer_data_size);
             void Draw();
         private:
             GLuint vertex_buffer_;
+            GLuint index_buffer_;
+
             int vertex_buffer_size_;
-            GLuint indices_buffer_object_;
-            int size_;
+            int index_buffer_size_;
     };
 
     class RenderableObject

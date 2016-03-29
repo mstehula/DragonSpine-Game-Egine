@@ -14,6 +14,7 @@ namespace dragonspinegameengine {
         public:
             static Engine* GetInstance();
             static Shader* GetBasicShader();
+            static Camera* GetCamera();
 
             void start();
             void stop();
@@ -27,6 +28,8 @@ namespace dragonspinegameengine {
         private:
             static Engine* instance_;
             static Shader* shader_;
+            static Camera* camera_;
+
             RenderableObject* obj1_;
             RenderableObject* obj2_;
             Renderer renderer;

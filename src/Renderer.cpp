@@ -96,12 +96,45 @@ namespace dragonspinegameengine {
 
     void Renderer::Render()
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         if(glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(window_) == GL_TRUE)
                 Engine::GetInstance()->stop();
 
         glfwSwapBuffers(window_);
+    }
+
+    void Renderer::ClearWindow()
+    {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    Camera::Camera()
+    {
+        CalculateViewMatrix();
+    }
+
+    void Camera::SetPosition(glm::vec3 r)
+    {
+        camera_pos_ = r;
+        CalculateViewMatrix();
+    }
+
+    void Camera::SetRotation(glm::vec3 r)
+    {
+        glm::mat4x4 rx = glm::rotate(r.x, glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::mat4x4 ry = glm::rotate(r.y, glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4x4 rz = glm::rotate(r.z, glm::vec3(0.0f, 0.0f, 1.0f));
+
+        rotation_matrix_ = rz * ry * rx;
+    }
+
+    void Camera::CalculateViewMatrix()
+    {
+        view_matrix_ = glm::lookAt(camera_pos_, camera_pos_ + camera_front_, camera_up_);
+    }
+
+    glm::mat4x4 Camera::GetViewMatrix()
+    {
+        return view_matrix_;
     }
 
     Vertex::Vertex(glm::vec3 pos)
@@ -123,12 +156,18 @@ namespace dragonspinegameengine {
         pos_ = glm::vec4(pos.x, pos.y, pos.z, 1.0f);
     }
 
-    void Mesh::AddVertices(GLfloat* vertex_buffer_data, int vertex_buffer_data_size)
+    void Mesh::AddVertices(GLfloat* vertex_buffer_data, int vertex_buffer_data_size, int* index_buffer_data, int index_buffer_data_size)
     {
         vertex_buffer_size_ = vertex_buffer_data_size;
+        index_buffer_size_ = index_buffer_data_size;
+
         glGenBuffers(1, &vertex_buffer_);
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
         glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data_size, vertex_buffer_data, GL_STATIC_DRAW);
+
+        glGenBuffers(1, &index_buffer_);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_data_size, index_buffer_data, GL_STATIC_DRAW);
     }
 
     void Mesh::Draw()
@@ -137,7 +176,9 @@ namespace dragonspinegameengine {
 
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-        glDrawArrays(GL_TRIANGLES, 0, vertex_buffer_size_/sizeof(GL_FLOAT));
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
+        glDrawElements(GL_TRIANGLES, index_buffer_size_, GL_UNSIGNED_INT, 0);
 
         glDisableVertexAttribArray(0);
     }

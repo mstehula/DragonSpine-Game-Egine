@@ -6,9 +6,6 @@ namespace dragonspinegameengine {
     class Input
     {
         public:
-            Input();
-            virtual ~Input();
-
             void update();
         protected:
 

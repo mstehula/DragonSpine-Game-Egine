@@ -35,6 +35,7 @@ namespace dragonspinegameengine {
 
     Engine* Engine::instance_ = 0;
     Shader* Engine::shader_ = 0;
+    Camera* Engine::camera_ = 0;
 
     Engine* Engine::GetInstance()
     {
@@ -52,6 +53,15 @@ namespace dragonspinegameengine {
             Engine::shader_ = new Shader();
         }
         return shader_;
+    }
+
+    Camera* Engine::GetCamera()
+    {
+        if(Engine::camera_ == nullptr)
+        {
+            Engine::camera_ = new Camera();
+        }
+        return camera_;
     }
 
     void Engine::start()
@@ -89,56 +99,45 @@ namespace dragonspinegameengine {
 
         renderer.InitWindow();
 
-        GLfloat vertex_buffer_data1[] =
+        GLfloat vertex_buffer_data[] =
         {
-            -1.0f,-1.0f,-1.0f, // triangle 1 : begin
+            -1.0f,-1.0f,-1.0f,
             -1.0f,-1.0f, 1.0f,
-            -1.0f, 1.0f, 1.0f, // triangle 1 : end
-            1.0f, 1.0f,-1.0f, // triangle 2 : begin
-            -1.0f,-1.0f,-1.0f,
-            -1.0f, 1.0f,-1.0f, // triangle 2 : end
-            1.0f,-1.0f, 1.0f,
-            -1.0f,-1.0f,-1.0f,
-            1.0f,-1.0f,-1.0f,
+            -1.0f, 1.0f, -1.0f,
+            -1.0f, 1.0f, 1.0f,
+            1.0f, -1.0f,-1.0f,
+            1.0f, -1.0f,1.0f,
             1.0f, 1.0f,-1.0f,
-            1.0f,-1.0f,-1.0f,
-            -1.0f,-1.0f,-1.0f,
-            -1.0f,-1.0f,-1.0f,
-            -1.0f, 1.0f, 1.0f,
-            -1.0f, 1.0f,-1.0f,
-            1.0f,-1.0f, 1.0f,
-            -1.0f,-1.0f, 1.0f,
-            -1.0f,-1.0f,-1.0f,
-            -1.0f, 1.0f, 1.0f,
-            -1.0f,-1.0f, 1.0f,
-            1.0f,-1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f,-1.0f,-1.0f,
-            1.0f, 1.0f,-1.0f,
-            1.0f,-1.0f,-1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f,-1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f,-1.0f,
-            -1.0f, 1.0f,-1.0f,
-            1.0f, 1.0f, 1.0f,
-            -1.0f, 1.0f,-1.0f,
-            -1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            -1.0f, 1.0f, 1.0f,
-            1.0f,-1.0f, 1.0f
+            1.0f, 1.0f,1.0f,
         };
 
-        debug(3, "vertex buffer data size %d", sizeof(vertex_buffer_data1));
+        int index_buffer_data[] =
+        {
+            0,1,3,
+            0,3,2,
+            0,5,1,
+            0,4,5,
+            0,2,6,
+            0,6,4,
+            7,3,1,
+            7,1,5,
+            7,5,4,
+            7,4,6,
+            7,3,2,
+            7,2,6
+        };
+
+        debug(3, "vertex buffer data size %d", sizeof(vertex_buffer_data));
 
         obj1_ = new RenderableObject(glm::vec3(0.0,0.0,0.0), glm::vec3(0.0,0.0,0.0), glm::vec3(1,1,1));
-        obj1_->GetMesh()->AddVertices(vertex_buffer_data1, sizeof(vertex_buffer_data1));
+        obj1_->GetMesh()->AddVertices(vertex_buffer_data, sizeof(vertex_buffer_data), index_buffer_data, sizeof(index_buffer_data));
 
         GetBasicShader()->AddVertexShader("resources/shaders/basicVertex.vs");
         GetBasicShader()->AddFragmentShader("resources/shaders/basicFragment.fs");
         GetBasicShader()->CompileShader();
         GetBasicShader()->SetPerspectiveMatrix(glm::perspective(glm::radians(90.0f), (float) (1024 / 768), 0.1f, 100.0f));
-        GetBasicShader()->SetViewMatrix(glm::lookAt(glm::vec3(40,3,3), glm::vec3(0,0,0), glm::vec3(0,1,0)));
+
+        GetCamera()->SetPosition(glm::vec3(0.0f,0.0f,5.0f));
 
         while(running)
         {
@@ -169,15 +168,16 @@ namespace dragonspinegameengine {
     void Engine::tick()
     {
         rotation += .01;
-        obj1_->SetRotation(glm::vec3(rotation, rotation, 0.0f));
+        obj1_->SetRotation(glm::vec3(rotation, 0, rotation));
         glfwPollEvents();
     }
 
     void Engine::render()
     {
+        renderer.ClearWindow();
         GetBasicShader()->Bind();
         GetBasicShader()->SetPerspectiveMatrix(glm::perspective(glm::radians(90.0f), (float) (1024 / 768), 0.1f, 100.0f));
-        GetBasicShader()->SetViewMatrix(glm::lookAt(glm::vec3(4,3,3), glm::vec3(0,0,0), glm::vec3(0,1,0)));
+        GetBasicShader()->SetViewMatrix(GetCamera()->GetViewMatrix());
         obj1_->Render();
         renderer.Render();
     }
