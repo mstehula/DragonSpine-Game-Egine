@@ -33,9 +33,9 @@ namespace dragonspinegameengine {
         return 0;
     }
 
-    Engine* Engine::instance_ = 0;
-    Shader* Engine::shader_ = 0;
-    Camera* Engine::camera_ = 0;
+    Engine* Engine::instance_;
+    Shader* Engine::shader_;
+    Renderer* Engine::renderer_;
 
     Engine* Engine::GetInstance()
     {
@@ -55,13 +55,13 @@ namespace dragonspinegameengine {
         return shader_;
     }
 
-    Camera* Engine::GetCamera()
+    Renderer* Engine::GetRenderer()
     {
-        if(Engine::camera_ == nullptr)
+        if(Engine::renderer_ == nullptr)
         {
-            Engine::camera_ = new Camera();
+            Engine::renderer_ = new Renderer();
         }
-        return camera_;
+        return renderer_;
     }
 
     void Engine::start()
@@ -137,7 +137,9 @@ namespace dragonspinegameengine {
         GetBasicShader()->CompileShader();
         GetBasicShader()->SetPerspectiveMatrix(glm::perspective(glm::radians(90.0f), (float) (1024 / 768), 0.1f, 100.0f));
 
-        GetCamera()->SetPosition(glm::vec3(0.0f,0.0f,5.0f));
+        GetRenderer()->SetCamera(Renderer::CameraType::Player);
+        GetRenderer()->GetCamera()->SetPosition(0.0f, 0.0f, 5.0f);
+        GetRenderer()->GetCamera()->SetRotation(0.0f, 0.0f, 0.0f);
 
         while(running)
         {
@@ -150,6 +152,11 @@ namespace dragonspinegameengine {
                 next_game_tick += game_skip_ticks;
             }
 
+            //Interpolation is how much of a second has passed by since the last game tick;
+            interpolation = (float) ((getTime() + game_skip_ticks - next_game_tick) / game_skip_ticks);
+            render();
+            frames++;
+
             if(getTime() > next_fps_tick)
             {
                 debug(kDebugAll, "FPS:[%d] TPS:[%d]", frames, ticks);
@@ -158,18 +165,14 @@ namespace dragonspinegameengine {
                 next_fps_tick += fps_skip_ticks;
             }
 
-            //Interpolation is how much of a second has passed by since the last render tick;
-            interpolation = (float) ((getTime() + game_skip_ticks - next_game_tick) / game_skip_ticks);
-            render();
-            frames++;
         }
     }
 
     void Engine::tick()
     {
+        renderer.Input();
         rotation += .01;
         obj1_->SetRotation(glm::vec3(rotation, 0, rotation));
-        glfwPollEvents();
     }
 
     void Engine::render()
@@ -177,7 +180,7 @@ namespace dragonspinegameengine {
         renderer.ClearWindow();
         GetBasicShader()->Bind();
         GetBasicShader()->SetPerspectiveMatrix(glm::perspective(glm::radians(90.0f), (float) (1024 / 768), 0.1f, 100.0f));
-        GetBasicShader()->SetViewMatrix(GetCamera()->GetViewMatrix());
+        GetBasicShader()->SetViewMatrix(GetRenderer()->GetCamera()->GetViewMatrix());
         obj1_->Render();
         renderer.Render();
     }

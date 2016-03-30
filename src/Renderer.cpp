@@ -10,49 +10,22 @@
 #include <GLM/mat4x4.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include "Renderer.h"
+#include "Input.h"
 #include "Engine.h"
+#include "Renderer.h"
 
 namespace dragonspinegameengine {
 
-    void Renderer::TestWindow()
+    Renderer::Renderer()
     {
-        debug(kDebugAll, "Renderer - Test window");
-        window_ = glfwCreateWindow(640, 480, "Simple Example", NULL, NULL);
+        player_camera_ = new Camera();
+        aux_camera_ = new Camera();
+    }
 
-        if(!window_)
-        {
-            glfwTerminate();
-            exit(EXIT_FAILURE);
-        }
-
-        glfwMakeContextCurrent(window_);
-        glfwSwapInterval(1);
-
-        while(!glfwWindowShouldClose(window_))
-        {
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glOrtho(-(640/480.0), (640/480.0), -1.0f, 1.0f, 1.0f, -1.0f);
-
-            glMatrixMode(GL_MODELVIEW);
-
-            glBegin(GL_TRIANGLES);
-            glColor3f(1.0f, 0.0f, 0.0f);
-            glVertex3f(-0.6f, -0.4f, 0.0f);
-            glColor3f(0.0f, 1.0f, 0.0f);
-            glVertex3f(0.6f, -0.4f, 0.0f);
-            glColor3f(0.0f, 0.0f, 1.0f);
-            glVertex3f(0.0f, 0.6f, 0.0f);
-            glEnd();
-
-            glfwSwapBuffers(window_);
-            glfwPollEvents();
-        }
-
-        glfwDestroyWindow(window_);
+    Renderer::~Renderer()
+    {
+        delete player_camera_;
+        delete aux_camera_;
     }
 
     void Renderer::InitWindow()
@@ -70,7 +43,7 @@ namespace dragonspinegameengine {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL
 
         // Open a window and create its OpenGL context
-        window_ = glfwCreateWindow( 1024, 768, "DragonSpine Game Engine Internal Testing Window", NULL, NULL);
+        window_ = glfwCreateWindow( window_width_, window_height_, "DragonSpine Game Engine Internal Testing Window", NULL, NULL);
         if(window_ == NULL){
             debug(3, "Failed to create window");
             glfwTerminate();
@@ -88,18 +61,53 @@ namespace dragonspinegameengine {
         glBindVertexArray(VertexArrayID);
 
         glfwSetInputMode(window_, GLFW_STICKY_KEYS, GL_TRUE);
+        glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetCursorPosCallback(window_, Input::CursorPosCallback);
+        glfwSetMouseButtonCallback(window_, Input::CursorButtonCallback);
+        glfwSetKeyCallback(window_, Input::KeyCallback);
         glClearColor(.2f, .2f, .2f, 1.0f);
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
     }
 
+    void Renderer::SetCamera(CameraType camera)
+    {
+        if(camera == CameraType::Player)
+        {
+            current_camera_ = player_camera_;
+        }
+        else if(camera == CameraType::Aux)
+        {
+            current_camera_ = aux_camera_;
+        }
+    }
+
+    Camera* Renderer::GetCamera()
+    {
+        return current_camera_;
+    }
+
     void Renderer::Render()
     {
-        if(glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(window_) == GL_TRUE)
+        if(glfwWindowShouldClose(window_) == GL_TRUE)
                 Engine::GetInstance()->stop();
 
         glfwSwapBuffers(window_);
+    }
+
+    void Renderer::Input()
+    {
+        Input::GetInstance()->Update();
+        if(glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        {
+            Engine::GetInstance()->stop();
+        }
+    }
+
+    glm::mat4x4 Renderer::GetPerspectiveMatrix()
+    {
+        return glm::perspective(glm::radians(20.0f), (float) (window_width_ / window_height_), 0.1f, 100.0f);
     }
 
     void Renderer::ClearWindow()
@@ -112,19 +120,65 @@ namespace dragonspinegameengine {
         CalculateViewMatrix();
     }
 
-    void Camera::SetPosition(glm::vec3 r)
+    void Camera::SetPitch(float pitch)
     {
-        camera_pos_ = r;
+        pitch_ = pitch;
+        CalculateViewDirection();
         CalculateViewMatrix();
     }
 
-    void Camera::SetRotation(glm::vec3 r)
+    void Camera::SetYaw(float yaw)
     {
-        glm::mat4x4 rx = glm::rotate(r.x, glm::vec3(1.0f, 0.0f, 0.0f));
-        glm::mat4x4 ry = glm::rotate(r.y, glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4x4 rz = glm::rotate(r.z, glm::vec3(0.0f, 0.0f, 1.0f));
+        yaw_ = yaw;
+        CalculateViewDirection();
+        CalculateViewMatrix();
+    }
 
-        rotation_matrix_ = rz * ry * rx;
+    void Camera::SetRoll(float roll)
+    {
+        roll_ = roll;
+        CalculateViewDirection();
+        CalculateViewMatrix();
+    }
+
+    void Camera::SetRotation(float pitch, float yaw, float roll)
+    {
+        pitch_ = pitch;
+        yaw_ = yaw;
+        roll_ = roll;
+        CalculateViewDirection();
+        CalculateViewMatrix();
+    }
+
+    void Camera::SetPosition(float x, float y, float z)
+    {
+        camera_pos_ = glm::vec3(x, y, z);
+        CalculateViewMatrix();
+    }
+
+    void Camera::Rotate(float d_pitch, float d_yaw, float d_roll)
+    {
+        pitch_ += d_pitch;
+        yaw_ += d_yaw;
+
+        CalculateViewDirection();
+        CalculateViewMatrix();
+    }
+
+    void Camera::Move(float d_x, float d_y, float d_z)
+    {
+        camera_pos_ = camera_pos_ + glm::vec3(d_x, d_y, d_z);
+        CalculateViewMatrix();
+    }
+
+    void Camera::CalculateViewDirection()
+    {
+        camera_front_ = glm::vec3(
+            glm::sin(yaw_) * glm::cos(pitch_),
+            glm::sin(pitch_),
+            -glm::cos(yaw_) * glm::cos(pitch_)
+        );
+
     }
 
     void Camera::CalculateViewMatrix()

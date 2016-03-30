@@ -9,16 +9,37 @@
 
 namespace dragonspinegameengine {
 
+    class Camera;
+
     class Renderer
     {
         public:
-            void TestWindow();
+            Renderer();
+            virtual ~Renderer();
+
             void InitWindow();
 
+            enum CameraType {Player, Aux};
+
+            void SetCamera(CameraType camera);
+            Camera* GetCamera();
+
             void Render();
+            void Input();
+
+            glm::mat4x4 GetPerspectiveMatrix();
+
             void ClearWindow();
         private:
             GLFWwindow* window_;
+
+            Camera* current_camera_;
+
+            Camera* aux_camera_;
+            Camera* player_camera_;
+
+            int window_width_ = 1024;
+            int window_height_ = 768;
     };
 
     class Camera
@@ -26,21 +47,31 @@ namespace dragonspinegameengine {
         public:
             Camera();
 
-            static Camera* GetCamera();
+            void SetPitch(float pitch);
+            void SetYaw(float yaw);
+            void SetRoll(float roll);
+            void SetRotation(float pitch, float yaw, float roll);
+            void SetPosition(float x, float y, float z);
 
-            void SetPosition(glm::vec3 r);
-            void SetRotation(glm::vec3 r);
+            void Rotate(float d_pitch, float d_yaw, float d_roll);
+            void Move(float d_x, float d_y, float d_z);
 
-            void CalculateViewMatrix();
             glm::mat4x4 GetViewMatrix();
         private:
+            const glm::vec3 camera_pox_x_ = glm::vec3(0.0f, 0.0f, -1.0f);
+
+            float pitch_;
+            float yaw_;
+            float roll_;
+
             glm::vec3 camera_pos_ = glm::vec3(0.0f, 0.0f, 0.0f);
             glm::vec3 camera_front_ = glm::vec3(0.0f, 0.0f, -1.0f);
             glm::vec3 camera_up_ = glm::vec3(0.0f, 1.0f, 0.0f);
 
-            glm::mat4x4 translation_matrix_;
-            glm::mat4x4 rotation_matrix_;
             glm::mat4x4 view_matrix_;
+
+            void CalculateViewDirection();
+            void CalculateViewMatrix();
     };
 
     class Vertex

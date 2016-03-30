@@ -1,7 +1,6 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "Input.h"
 #include "Renderer.h"
 #include "Shaders.h"
 
@@ -14,7 +13,7 @@ namespace dragonspinegameengine {
         public:
             static Engine* GetInstance();
             static Shader* GetBasicShader();
-            static Camera* GetCamera();
+            static Renderer* GetRenderer();
 
             void start();
             void stop();
@@ -28,12 +27,11 @@ namespace dragonspinegameengine {
         private:
             static Engine* instance_;
             static Shader* shader_;
-            static Camera* camera_;
+            static Renderer* renderer_;
 
             RenderableObject* obj1_;
             RenderableObject* obj2_;
             Renderer renderer;
-            Input input;
 
             bool running = false;
             void run();
