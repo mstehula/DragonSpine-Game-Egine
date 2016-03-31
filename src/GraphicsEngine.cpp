@@ -12,7 +12,7 @@
 
 #include "Input.h"
 #include "Engine.h"
-#include "Renderer.h"
+#include "GraphicsEngine.h"
 
 namespace dragonspinegameengine {
 

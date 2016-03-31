@@ -1,7 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "Renderer.h"
+#include "GraphicsEngine.h"
 #include "Shaders.h"
 
 namespace dragonspinegameengine {

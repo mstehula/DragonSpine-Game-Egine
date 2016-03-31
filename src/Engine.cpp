@@ -10,7 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Engine.h"
-#include "Renderer.h"
+#include "GraphicsEngine.h"
 
 using namespace dragonspinegameengine;
 
