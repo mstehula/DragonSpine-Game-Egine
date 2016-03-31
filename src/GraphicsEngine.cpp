@@ -16,19 +16,19 @@
 
 namespace dragonspinegameengine {
 
-    Renderer::Renderer()
+    GraphicsEngine::GraphicsEngine()
     {
         player_camera_ = new Camera();
         aux_camera_ = new Camera();
     }
 
-    Renderer::~Renderer()
+    GraphicsEngine::~GraphicsEngine()
     {
         delete player_camera_;
         delete aux_camera_;
     }
 
-    void Renderer::InitWindow()
+    void GraphicsEngine::InitWindow()
     {
         if(!glfwInit())
         {
@@ -71,7 +71,7 @@ namespace dragonspinegameengine {
         glDepthFunc(GL_LESS);
     }
 
-    void Renderer::SetCamera(CameraType camera)
+    void GraphicsEngine::SetCamera(CameraType camera)
     {
         if(camera == CameraType::Player)
         {
@@ -83,12 +83,12 @@ namespace dragonspinegameengine {
         }
     }
 
-    Camera* Renderer::GetCamera()
+    Camera* GraphicsEngine::GetCamera()
     {
         return current_camera_;
     }
 
-    void Renderer::Render()
+    void GraphicsEngine::Render()
     {
         if(glfwWindowShouldClose(window_) == GL_TRUE)
                 Engine::GetInstance()->stop();
@@ -96,7 +96,7 @@ namespace dragonspinegameengine {
         glfwSwapBuffers(window_);
     }
 
-    void Renderer::Input()
+    void GraphicsEngine::Input()
     {
         Input::GetInstance()->Update();
         if(glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -105,12 +105,12 @@ namespace dragonspinegameengine {
         }
     }
 
-    glm::mat4x4 Renderer::GetPerspectiveMatrix()
+    glm::mat4x4 GraphicsEngine::GetPerspectiveMatrix()
     {
         return glm::perspective(glm::radians(20.0f), (float) (window_width_ / window_height_), 0.1f, 100.0f);
     }
 
-    void Renderer::ClearWindow()
+    void GraphicsEngine::ClearWindow()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }

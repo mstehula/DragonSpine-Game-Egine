@@ -29,7 +29,7 @@ namespace dragonspinegameengine
         cursor_prev_x_ = cursor_x;
         cursor_prev_y_ = cursor_y;
 
-        Engine::GetRenderer()->GetCamera()->Rotate(cursor_d_y_ * sensitivity, cursor_d_x_ * sensitivity, 0);
+        Engine::GetGraphicsEngine()->GetCamera()->Rotate(cursor_d_y_ * sensitivity, cursor_d_x_ * sensitivity, 0);
     }
 
     void Input::CursorButtonCallbackImpl(GLFWwindow* window, int button, int action, int mods)
@@ -45,21 +45,21 @@ namespace dragonspinegameengine
 
         // Move forward
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-            Engine::GetRenderer()->GetCamera()->Move(-1.0f * sensitivity, 0.0f, 0.0f);
+            Engine::GetGraphicsEngine()->GetCamera()->Move(-1.0f * sensitivity, 0.0f, 0.0f);
 
             debug(kDebugAll, "Move Forward");
         }
         // Move backward
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-            Engine::GetRenderer()->GetCamera()->Move(1.0f * sensitivity, 0.0f, 0.0f);
+            Engine::GetGraphicsEngine()->GetCamera()->Move(1.0f * sensitivity, 0.0f, 0.0f);
         }
         // Strafe right
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-            Engine::GetRenderer()->GetCamera()->Move(0.0f, 0.0f, -1.0f * sensitivity);
+            Engine::GetGraphicsEngine()->GetCamera()->Move(0.0f, 0.0f, -1.0f * sensitivity);
         }
         // Strafe left
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-            Engine::GetRenderer()->GetCamera()->Move(0.0f, 0.0f, 1.0f * sensitivity);
+            Engine::GetGraphicsEngine()->GetCamera()->Move(0.0f, 0.0f, 1.0f * sensitivity);
         }
 
     }

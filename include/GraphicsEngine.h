@@ -11,11 +11,11 @@ namespace dragonspinegameengine {
 
     class Camera;
 
-    class Renderer
+    class GraphicsEngine
     {
         public:
-            Renderer();
-            virtual ~Renderer();
+            GraphicsEngine();
+            virtual ~GraphicsEngine();
 
             void InitWindow();
 

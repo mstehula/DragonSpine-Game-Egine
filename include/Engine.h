@@ -13,7 +13,7 @@ namespace dragonspinegameengine {
         public:
             static Engine* GetInstance();
             static Shader* GetBasicShader();
-            static Renderer* GetRenderer();
+            static GraphicsEngine* GetGraphicsEngine();
 
             void start();
             void stop();
@@ -27,11 +27,10 @@ namespace dragonspinegameengine {
         private:
             static Engine* instance_;
             static Shader* shader_;
-            static Renderer* renderer_;
+            static GraphicsEngine* graphics_engine_;
 
             RenderableObject* obj1_;
             RenderableObject* obj2_;
-            Renderer renderer;
 
             bool running = false;
             void run();

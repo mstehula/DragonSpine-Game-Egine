@@ -35,7 +35,7 @@ namespace dragonspinegameengine {
 
     Engine* Engine::instance_;
     Shader* Engine::shader_;
-    Renderer* Engine::renderer_;
+    GraphicsEngine* Engine::graphics_engine_;
 
     Engine* Engine::GetInstance()
     {
@@ -55,13 +55,13 @@ namespace dragonspinegameengine {
         return shader_;
     }
 
-    Renderer* Engine::GetRenderer()
+    GraphicsEngine* Engine::GetGraphicsEngine()
     {
-        if(Engine::renderer_ == nullptr)
+        if(Engine::graphics_engine_ == nullptr)
         {
-            Engine::renderer_ = new Renderer();
+            Engine::graphics_engine_ = new GraphicsEngine();
         }
-        return renderer_;
+        return graphics_engine_;
     }
 
     void Engine::start()
@@ -97,7 +97,7 @@ namespace dragonspinegameengine {
         int frames = 0;
         int ticks = 0;
 
-        renderer.InitWindow();
+        GetGraphicsEngine()->InitWindow();
 
         GLfloat vertex_buffer_data[] =
         {
@@ -137,9 +137,9 @@ namespace dragonspinegameengine {
         GetBasicShader()->CompileShader();
         GetBasicShader()->SetPerspectiveMatrix(glm::perspective(glm::radians(90.0f), (float) (1024 / 768), 0.1f, 100.0f));
 
-        GetRenderer()->SetCamera(Renderer::CameraType::Player);
-        GetRenderer()->GetCamera()->SetPosition(0.0f, 0.0f, 5.0f);
-        GetRenderer()->GetCamera()->SetRotation(0.0f, 0.0f, 0.0f);
+        GetGraphicsEngine()->SetCamera(GraphicsEngine::CameraType::Player);
+        GetGraphicsEngine()->GetCamera()->SetPosition(0.0f, 0.0f, 5.0f);
+        GetGraphicsEngine()->GetCamera()->SetRotation(0.0f, 0.0f, 0.0f);
 
         while(running)
         {
@@ -170,19 +170,19 @@ namespace dragonspinegameengine {
 
     void Engine::tick()
     {
-        renderer.Input();
+        GetGraphicsEngine()->Input();
         rotation += .01;
         obj1_->SetRotation(glm::vec3(rotation, 0, rotation));
     }
 
     void Engine::render()
     {
-        renderer.ClearWindow();
+        GetGraphicsEngine()->ClearWindow();
         GetBasicShader()->Bind();
         GetBasicShader()->SetPerspectiveMatrix(glm::perspective(glm::radians(90.0f), (float) (1024 / 768), 0.1f, 100.0f));
-        GetBasicShader()->SetViewMatrix(GetRenderer()->GetCamera()->GetViewMatrix());
+        GetBasicShader()->SetViewMatrix(GetGraphicsEngine()->GetCamera()->GetViewMatrix());
         obj1_->Render();
-        renderer.Render();
+        GetGraphicsEngine()->Render();
     }
 
     void Engine::exit()
