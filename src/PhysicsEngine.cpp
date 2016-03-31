@@ -18,7 +18,6 @@ namespace dragonspinegameengine
     }
 
     void PhysicsEngine::Simulate(PhysicsObject* physics_object)
-<<<<<<< HEAD
     {
         physics_object->Simulate();
     }
@@ -52,25 +51,6 @@ namespace dragonspinegameengine
     {
         glm::vec3 acceleration = glm::vec3(x_force * mass_, y_force * mass_, z_force * mass_);
         velocity_ += acceleration;
-=======
-    {
-        physics_object->Simulate();
-    }
-
-    void PhysicsObject::Simulate()
-    {
-        position_ = position_ + velocity_;
-    }
-
-    void PhysicsObject::ApplyForce(float x_force, float y_force, float z_force)
-    {
-
-    }
-
-    void PhysicsObject::ApplyForceDir(float front_force, float side_force, float up_force)
-    {
-
->>>>>>> 030ad8506f6c2c8351350b15f4679771f893177a
     }
 
 }
