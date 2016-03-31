@@ -24,17 +24,33 @@ namespace dragonspinegameengine
 
     void PhysicsObject::Simulate()
     {
-        position_ = position_ + velocity_;
+        position_ += velocity_;
+    }
+
+    void PhysicsObject::SetPosition(glm::vec3 position)
+    {
+        position_ = position;
+    }
+
+    glm::vec3 PhysicsObject::GetPosition()
+    {
+        return position_;
+    }
+
+    void PhysicsObject::SetVelocity(glm::vec3 velocity)
+    {
+        velocity_ = velocity;
+    }
+
+    glm::vec3 PhysicsObject::GetVelocity()
+    {
+        return velocity_;
     }
 
     void PhysicsObject::ApplyForce(float x_force, float y_force, float z_force)
     {
-
-    }
-
-    void PhysicsObject::ApplyForceDir(float front_force, float side_force, float up_force)
-    {
-
+        glm::vec3 acceleration = glm::vec3(x_force * mass_, y_force * mass_, z_force * mass_);
+        velocity_ += acceleration;
     }
 
 }

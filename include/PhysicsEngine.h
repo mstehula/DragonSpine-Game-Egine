@@ -25,13 +25,17 @@ namespace dragonspinegameengine
         public:
             void Simulate();
 
+            void SetPosition(glm::vec3 position);
+            glm::vec3 GetPosition();
+
+            void SetVelocity(glm::vec3 velocity);
+            glm::vec3 GetVelocity();
+
             void ApplyForce(float x_force, float y_force, float z_force);
-            void ApplyForceDir(float front_froce, float side_force, float up_force);
             void Stop();
         private:
             glm::vec3 position_;
             glm::vec3 velocity_;
-            glm::vec3 direction_;
 
             float mass_;
     };
