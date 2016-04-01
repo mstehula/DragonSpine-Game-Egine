@@ -12,6 +12,7 @@
 namespace dragonspinegameengine {
 
     class Camera;
+    class GraphicsObject;
 
     class GraphicsEngine
     {
@@ -29,6 +30,9 @@ namespace dragonspinegameengine {
         void CheckCloseState();
 
         void SetupShaders();
+
+        void RegisterObject(GraphicsObject* object);
+        void UnregisterObject(GraphicsObject* object);
 
         void PreRender();
         void Render();
@@ -113,6 +117,7 @@ namespace dragonspinegameengine {
     {
     public:
         GraphicsObject();
+        virtual ~GraphicsObject();
 
         void SetPosition(glm::vec3 pos);
         glm::vec3 GetPosition();

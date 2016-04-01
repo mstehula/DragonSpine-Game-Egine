@@ -7,6 +7,9 @@ namespace dragonspinegameengine
 {
     class EngineObject
     {
+    public:
+        EngineObject(){};
+        virtual ~EngineObject(){}
     private:
         glm::vec3 position_;
         glm::vec3 velocity_;
@@ -40,6 +43,9 @@ namespace dragonspinegameengine {
 
             void Start();
             void Stop();
+
+            void RegisterObect(EngineObject* object);
+            void UnregisterObject(EngineObject* object);
         private:
             static Engine* engine_;
             GraphicsEngine* graphics_engine_;

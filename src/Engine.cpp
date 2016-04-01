@@ -77,6 +77,30 @@ namespace dragonspinegameengine {
         running_ = false;
     }
 
+    void Engine::RegisterObect(EngineObject* object)
+    {
+        if(config_.graphics_engine_)
+        {
+            graphics_engine_->RegisterObject(dynamic_cast<GraphicsObject*>(object));
+        }
+        if(config_.physics_engine_)
+        {
+            physics_engine_->RegisterObject(dynamic_cast<PhysicsObject*>(object));
+        }
+    }
+
+    void Engine::UnregisterObject(EngineObject* object)
+    {
+        if(config_.graphics_engine_)
+        {
+            graphics_engine_->UnregisterObject(dynamic_cast<GraphicsObject*>(object));
+        }
+        if(config_.physics_engine_)
+        {
+            physics_engine_->UnregisterObject(dynamic_cast<PhysicsObject*>(object));
+        }
+    }
+
     void Engine::Run()
     {
         debug(kDebugAll, "Engine Run called");

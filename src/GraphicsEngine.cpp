@@ -121,6 +121,16 @@ namespace dragonspinegameengine {
         shader_->CompileShader();
     }
 
+    void GraphicsEngine::RegisterObject(GraphicsObject* object)
+    {
+
+    }
+
+    void GraphicsEngine::UnregisterObject(GraphicsObject* object)
+    {
+
+    }
+
     void GraphicsEngine::PreRender()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -278,6 +288,11 @@ namespace dragonspinegameengine {
         translation_matrix_ = glm::mat4x4(1.0f);
         rotation_matrix_ = glm::mat4x4(1.0f);
         scale_matrix_ = glm::mat4x4(1.0f);
+    }
+
+    GraphicsObject::~GraphicsObject()
+    {
+
     }
 
     void GraphicsObject::SetPosition(glm::vec3 pos)

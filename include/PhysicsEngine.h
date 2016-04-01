@@ -5,13 +5,15 @@
 
 namespace dragonspinegameengine
 {
-
     class PhysicsObject;
 
     class PhysicsEngine
     {
         public:
             PhysicsEngine();
+
+            void RegisterObject(PhysicsObject* object){};
+            void UnregisterObject(PhysicsObject* object){};
 
             void Simulate(PhysicsObject* physics_object);
             void SimulatePhysics();
@@ -23,6 +25,7 @@ namespace dragonspinegameengine
     {
         public:
             PhysicsObject();
+            virtual ~PhysicsObject(){};
 
             void Simulate();
 
