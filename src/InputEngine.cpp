@@ -1,25 +1,25 @@
 #include "Engine.h"
-#include "Input.h"
+#include "InputEngine.h"
 
 namespace dragonspinegameengine
 {
-    Input* Input::instance_ = 0;
+    InputEngine* InputEngine::instance_ = 0;
 
-    Input* Input::GetInstance()
+    InputEngine* InputEngine::GetInstance()
     {
-        if(Input::instance_ == nullptr)
+        if(InputEngine::instance_ == nullptr)
         {
-            Input::instance_ = new Input();
+            InputEngine::instance_ = new InputEngine();
         }
-        return Input::instance_;
+        return InputEngine::instance_;
     }
 
-    void Input::Update()
+    void InputEngine::PollInput()
     {
         glfwPollEvents();
     }
 
-    void Input::CursorPosCallbackImpl(GLFWwindow* window, double cursor_x, double cursor_y)
+    void InputEngine::CursorPosCallbackImpl(GLFWwindow* window, double cursor_x, double cursor_y)
     {
         float sensitivity = .005f;
 
@@ -28,16 +28,14 @@ namespace dragonspinegameengine
 
         cursor_prev_x_ = cursor_x;
         cursor_prev_y_ = cursor_y;
-
-        Engine::GetGraphicsEngine()->GetCamera()->Rotate(cursor_d_y_ * sensitivity, cursor_d_x_ * sensitivity, 0);
     }
 
-    void Input::CursorButtonCallbackImpl(GLFWwindow* window, int button, int action, int mods)
+    void InputEngine::CursorButtonCallbackImpl(GLFWwindow* window, int button, int action, int mods)
     {
 
     }
 
-    void Input::KeyCallbackImpl(GLFWwindow* window, int key, int scancode, int action, int mods)
+    void InputEngine::KeyCallbackImpl(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         float sensitivity = .5f;
 
@@ -45,26 +43,21 @@ namespace dragonspinegameengine
 
         // Move forward
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-            Engine::GetGraphicsEngine()->GetCamera()->Move(-1.0f * sensitivity, 0.0f, 0.0f);
-
             debug(kDebugAll, "Move Forward");
         }
         // Move backward
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-            Engine::GetGraphicsEngine()->GetCamera()->Move(1.0f * sensitivity, 0.0f, 0.0f);
         }
         // Strafe right
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-            Engine::GetGraphicsEngine()->GetCamera()->Move(0.0f, 0.0f, -1.0f * sensitivity);
         }
         // Strafe left
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-            Engine::GetGraphicsEngine()->GetCamera()->Move(0.0f, 0.0f, 1.0f * sensitivity);
         }
 
     }
 
-    Input::Input()
+    InputEngine::InputEngine()
     {
         int width, height;
         glfwGetWindowSize(glfwGetCurrentContext(), &width, &height);

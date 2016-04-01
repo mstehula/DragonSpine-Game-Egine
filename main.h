@@ -3,11 +3,10 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "PhysicsEngine.h"
+#include "GraphicsEngine.h"
 
-class Entity: public dragonspinegameengine::PhysicsObject
+class Entity: public dragonspinegameengine::GraphicsObject, public dragonspinegameengine::PhysicsObject
 {
-
 };
 
 #endif // MAIN_H

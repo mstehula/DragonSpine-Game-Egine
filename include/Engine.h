@@ -1,8 +1,21 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include <glm/vec3.hpp>
+
+namespace dragonspinegameengine
+{
+    class EngineObject
+    {
+    private:
+        glm::vec3 position_;
+        glm::vec3 velocity_;
+    };
+}
+
 #include "GraphicsEngine.h"
-#include "Shaders.h"
+#include "InputEngine.h"
+#include "PhysicsEngine.h"
 
 namespace dragonspinegameengine {
 
@@ -11,29 +24,33 @@ namespace dragonspinegameengine {
     class Engine
     {
         public:
-            static Engine* GetInstance();
-            static Shader* GetBasicShader();
-            static GraphicsEngine* GetGraphicsEngine();
+            struct EngineConfig
+            {
+                int ticks_per_second_ = 1;
+                int max_frame_skips_ = 1;
 
-            void start();
-            void stop();
+                bool physics_engine_ = false;
+                bool graphics_engine_ = true;
+            };
 
-            void tick();
-            void render();
+            static Engine* GetEngine();
 
-            void exit();
-        protected:
+            void ConfigureEngine(struct EngineConfig config);
+            struct EngineConfig GetConfig();
 
+            void Start();
+            void Stop();
         private:
-            static Engine* instance_;
-            static Shader* shader_;
-            static GraphicsEngine* graphics_engine_;
+            static Engine* engine_;
+            GraphicsEngine* graphics_engine_;
+            PhysicsEngine* physics_engine_;
+            InputEngine* input_engine_;
 
-            RenderableObject* obj1_;
-            RenderableObject* obj2_;
+            EngineConfig config_;
 
-            bool running = false;
-            void run();
+            bool running_ = false;
+
+            void Run();
     };
 
     class ResourceLoader

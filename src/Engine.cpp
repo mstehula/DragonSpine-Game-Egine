@@ -1,93 +1,88 @@
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
-#include <glm/vec3.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "Engine.h"
 #include "GraphicsEngine.h"
+#include "InputEngine.h"
+#include "PhysicsEngine.h"
 
 using namespace dragonspinegameengine;
 
 namespace dragonspinegameengine {
 
-    int entry(int argc, char** argv)
+    Engine* Engine::engine_;
+
+    Engine* Engine::GetEngine()
     {
-        debug(kDebugCritical, "Welcome to the DragonSpine Game Engine");
-        debug(kDebugAll, "Starting...");
-
-        Engine::GetInstance()->start();
-        Engine::GetInstance()->exit();
-        delete Engine::GetInstance();
-
-        debug(kDebugAll, "Engine spinning down");
-        debug(kDebugCritical, "Thank you for using the DragonSpine Game Engine");
-
-        glfwTerminate();
-
-        return 0;
-    }
-
-    Engine* Engine::instance_;
-    Shader* Engine::shader_;
-    GraphicsEngine* Engine::graphics_engine_;
-
-    Engine* Engine::GetInstance()
-    {
-        if(Engine::instance_ == nullptr)
+        if(Engine::engine_ == nullptr)
         {
-            Engine::instance_ = new Engine();
+            Engine::engine_ = new Engine();
         }
-        return instance_;
+        return engine_;
     }
 
-    Shader* Engine::GetBasicShader()
+    void Engine::ConfigureEngine(struct EngineConfig config)
     {
-        if(Engine::shader_ == nullptr)
+        config_ = config;
+
+        if(config_.graphics_engine_ == true && graphics_engine_ == nullptr)
         {
-            Engine::shader_ = new Shader();
+            graphics_engine_ = new GraphicsEngine();
+            graphics_engine_->CreateContext();
         }
-        return shader_;
+        else if(config_.graphics_engine_ == false && graphics_engine_ != nullptr)
+        {
+            debug(kDebugWarning, "Warning: Graphics engine already initialized before you changed configurations");
+        }
+        else
+        {
+            if(!glfwInit())
+            {
+                fprintf(stderr, "Error initializing glfw");
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        if(config_.physics_engine_ == true && graphics_engine_ == nullptr)
+        {
+            physics_engine_ = new PhysicsEngine();
+        }
+        else if(config_.physics_engine_ == false && physics_engine_ != nullptr)
+        {
+            debug(kDebugWarning, "Warning: Physics engine already initialized before you changed configurations");
+        }
     }
 
-    GraphicsEngine* Engine::GetGraphicsEngine()
+    struct Engine::EngineConfig Engine::GetConfig()
     {
-        if(Engine::graphics_engine_ == nullptr)
-        {
-            Engine::graphics_engine_ = new GraphicsEngine();
-        }
-        return graphics_engine_;
+        return config_;
     }
 
-    void Engine::start()
     //To prevent starting again, use a boolean switch that
     //only starts the engine if it is not running
+    void Engine::Start()
     {
-        if(running) return;
-        running = true;
+        if(running_) return;
+        running_ = true;
 
-        run();
+        Run();
     }
 
-    void Engine::stop()
+    void Engine::Stop()
     {
-        if(!running) return;
-        running = false;
+        if(!running_) return;
+        running_ = false;
     }
 
-    float rotation = 0;
-
-    void Engine::run()
+    void Engine::Run()
     {
-        const int ticks_per_second = 100;
-        const float game_skip_ticks = 1.0f/ticks_per_second;
+        debug(kDebugAll, "Engine Run called");
+
+        const float game_skip_ticks = 1.0f/config_.ticks_per_second_;
         const float fps_skip_ticks = 1.0f;
-        const int max_frame_skips = 5;
 
         double next_game_tick = getTime();
         double next_fps_tick = getTime();
@@ -97,56 +92,27 @@ namespace dragonspinegameengine {
         int frames = 0;
         int ticks = 0;
 
-        GetGraphicsEngine()->InitWindow();
-
-        GLfloat vertex_buffer_data[] =
+        if(config_.graphics_engine_ == true)
         {
-            -1.0f,-1.0f,-1.0f,
-            -1.0f,-1.0f, 1.0f,
-            -1.0f, 1.0f, -1.0f,
-            -1.0f, 1.0f, 1.0f,
-            1.0f, -1.0f,-1.0f,
-            1.0f, -1.0f,1.0f,
-            1.0f, 1.0f,-1.0f,
-            1.0f, 1.0f,1.0f,
-        };
+            graphics_engine_->ShowWindow(true);
+            graphics_engine_->SetWindowSize(700, 500);
+            graphics_engine_->SetupShaders();
+        }
 
-        int index_buffer_data[] =
-        {
-            0,1,3,
-            0,3,2,
-            0,5,1,
-            0,4,5,
-            0,2,6,
-            0,6,4,
-            7,3,1,
-            7,1,5,
-            7,5,4,
-            7,4,6,
-            7,3,2,
-            7,2,6
-        };
-
-        debug(3, "vertex buffer data size %d", sizeof(vertex_buffer_data));
-
-        obj1_ = new RenderableObject(glm::vec3(0.0,0.0,0.0), glm::vec3(0.0,0.0,0.0), glm::vec3(1,1,1));
-        obj1_->GetMesh()->AddVertices(vertex_buffer_data, sizeof(vertex_buffer_data), index_buffer_data, sizeof(index_buffer_data));
-
-        GetBasicShader()->AddVertexShader("resources/shaders/basicVertex.vs");
-        GetBasicShader()->AddFragmentShader("resources/shaders/basicFragment.fs");
-        GetBasicShader()->CompileShader();
-        GetBasicShader()->SetPerspectiveMatrix(glm::perspective(glm::radians(90.0f), (float) (1024 / 768), 0.1f, 100.0f));
-
-        GetGraphicsEngine()->SetCamera(GraphicsEngine::CameraType::Player);
-        GetGraphicsEngine()->GetCamera()->SetPosition(0.0f, 0.0f, 5.0f);
-        GetGraphicsEngine()->GetCamera()->SetRotation(0.0f, 0.0f, 0.0f);
-
-        while(running)
+        while(running_)
         {
             loops = 0;
-            while(getTime() > next_game_tick && loops < max_frame_skips)
+            while(getTime() > next_game_tick && loops < config_.max_frame_skips_)
             {
-                tick();
+                input_engine_->PollInput();
+                if(config_.physics_engine_ == true)
+                {
+                    physics_engine_->SimulatePhysics();
+                }
+                if(config_.graphics_engine_ == true)
+                {
+                    graphics_engine_->CheckCloseState();
+                }
                 ticks++;
                 loops++;
                 next_game_tick += game_skip_ticks;
@@ -154,8 +120,14 @@ namespace dragonspinegameengine {
 
             //Interpolation is how much of a second has passed by since the last game tick;
             interpolation = (float) ((getTime() + game_skip_ticks - next_game_tick) / game_skip_ticks);
-            render();
             frames++;
+
+            if(config_.graphics_engine_)
+            {
+                graphics_engine_->PreRender();
+                graphics_engine_->Render();
+                graphics_engine_->PostRender();
+            }
 
             if(getTime() > next_fps_tick)
             {
@@ -164,32 +136,7 @@ namespace dragonspinegameengine {
                 ticks = 0;
                 next_fps_tick += fps_skip_ticks;
             }
-
         }
-    }
-
-    void Engine::tick()
-    {
-        GetGraphicsEngine()->Input();
-        rotation += .01;
-        obj1_->SetRotation(glm::vec3(rotation, 0, rotation));
-    }
-
-    void Engine::render()
-    {
-        GetGraphicsEngine()->ClearWindow();
-        GetBasicShader()->Bind();
-        GetBasicShader()->SetPerspectiveMatrix(glm::perspective(glm::radians(90.0f), (float) (1024 / 768), 0.1f, 100.0f));
-        GetBasicShader()->SetViewMatrix(GetGraphicsEngine()->GetCamera()->GetViewMatrix());
-        obj1_->Render();
-        GetGraphicsEngine()->Render();
-    }
-
-    void Engine::exit()
-    {
-        delete shader_;
-        delete obj1_;
-        delete obj2_;
     }
 
     void ResourceLoader::LoadShader(const char* shader_filename, char** shader_file, int* shader_file_size)

@@ -11,18 +11,19 @@ namespace dragonspinegameengine
     class PhysicsEngine
     {
         public:
-            static PhysicsEngine* GetInstance();
+            PhysicsEngine();
 
             void Simulate(PhysicsObject* physics_object);
+            void SimulatePhysics();
         private:
             static PhysicsEngine* instance_;
-
-            PhysicsEngine();
     };
 
     class PhysicsObject
     {
         public:
+            PhysicsObject();
+
             void Simulate();
 
             void SetPosition(glm::vec3 position);

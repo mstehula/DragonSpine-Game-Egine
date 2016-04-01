@@ -10,9 +10,10 @@
 #include <GLM/mat4x4.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include "Input.h"
 #include "Engine.h"
 #include "GraphicsEngine.h"
+#include "InputEngine.h"
+#include "Shaders.h"
 
 namespace dragonspinegameengine {
 
@@ -26,49 +27,6 @@ namespace dragonspinegameengine {
     {
         delete player_camera_;
         delete aux_camera_;
-    }
-
-    void GraphicsEngine::InitWindow()
-    {
-        if(!glfwInit())
-        {
-            fprintf(stderr, "Error initializing glfw");
-            exit(EXIT_FAILURE);
-        }
-
-        glfwWindowHint(GLFW_SAMPLES, 16); // 4x antialiasing
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL
-
-        // Open a window and create its OpenGL context
-        window_ = glfwCreateWindow( window_width_, window_height_, "DragonSpine Game Engine Internal Testing Window", NULL, NULL);
-        if(window_ == NULL){
-            debug(3, "Failed to create window");
-            glfwTerminate();
-            exit(EXIT_FAILURE);
-        }
-        glfwMakeContextCurrent(window_); // Initialize GLEW
-        glewExperimental=true; // Needed in core profile
-        if(glewInit() != GLEW_OK) {
-            fprintf(stderr, "Failed to initialize GLEW\n");
-            exit(EXIT_FAILURE);
-        }
-
-        GLuint VertexArrayID;
-        glGenVertexArrays(1, &VertexArrayID);
-        glBindVertexArray(VertexArrayID);
-
-        glfwSetInputMode(window_, GLFW_STICKY_KEYS, GL_TRUE);
-        glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        glfwSetCursorPosCallback(window_, Input::CursorPosCallback);
-        glfwSetMouseButtonCallback(window_, Input::CursorButtonCallback);
-        glfwSetKeyCallback(window_, Input::KeyCallback);
-        glClearColor(.2f, .2f, .2f, 1.0f);
-
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
     }
 
     void GraphicsEngine::SetCamera(CameraType camera)
@@ -88,31 +46,98 @@ namespace dragonspinegameengine {
         return current_camera_;
     }
 
-    void GraphicsEngine::Render()
+    void GraphicsEngine::CreateContext()
     {
-        if(glfwWindowShouldClose(window_) == GL_TRUE)
-                Engine::GetInstance()->stop();
+        if(!glfwInit())
+        {
+            fprintf(stderr, "Error initializing glfw");
+            exit(EXIT_FAILURE);
+        }
 
-        glfwSwapBuffers(window_);
+        glfwWindowHint(GLFW_SAMPLES, 16); // 4x antialiasing
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL
+        glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+
+        window_ = glfwCreateWindow(100, 100, "Testing - should be invisible", NULL, NULL);
+        if(window_ == NULL){
+            debug(3, "Failed to create window");
+            glfwTerminate();
+            exit(EXIT_FAILURE);
+        }
+
+        glfwMakeContextCurrent(window_);
+        glewExperimental=true; // Needed in core profile
+        if(glewInit() != GLEW_OK) {
+            fprintf(stderr, "Failed to initialize GLEW\n");
+            exit(EXIT_FAILURE);
+        }
+
+        GLuint VertexArrayID;
+        glGenVertexArrays(1, &VertexArrayID);
+        glBindVertexArray(VertexArrayID);
+
+        glClearColor(.2f, .2f, .2f, 1.0f);
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
     }
 
-    void GraphicsEngine::Input()
+    void GraphicsEngine::ShowWindow(bool show)
     {
-        Input::GetInstance()->Update();
-        if(glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        if(show)
         {
-            Engine::GetInstance()->stop();
+            glfwShowWindow(window_);
+        }
+        else
+        {
+            glfwHideWindow(window_);
         }
     }
 
-    glm::mat4x4 GraphicsEngine::GetPerspectiveMatrix()
+    void GraphicsEngine::SetWindowSize(int window_width, int window_height)
     {
-        return glm::perspective(glm::radians(20.0f), (float) (window_width_ / window_height_), 0.1f, 100.0f);
+        window_width_ = window_width;
+        window_height_ = window_height;
+
+        glfwSetWindowSize(window_, window_width_, window_height_);
     }
 
-    void GraphicsEngine::ClearWindow()
+    void GraphicsEngine::CheckCloseState()
+    {
+        if(glfwWindowShouldClose(window_) == GL_TRUE)
+        {
+            Engine::GetEngine()->Stop();
+        }
+    }
+
+    void GraphicsEngine::SetupShaders()
+    {
+        shader_ = new Shader();
+        shader_->AddVertexShader("resources/shaders/basicVertex.vs");
+        shader_->AddFragmentShader("resources/shaders/basicFragment.fs");
+        shader_->CompileShader();
+    }
+
+    void GraphicsEngine::PreRender()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        shader_->Bind();
+    }
+
+    void GraphicsEngine::Render()
+    {
+
+    }
+
+    void GraphicsEngine::PostRender()
+    {
+        if(glfwWindowShouldClose(window_) == GL_TRUE)
+                Engine::GetEngine()->Stop();
+
+        glfwSwapBuffers(window_);
     }
 
     Camera::Camera()
@@ -178,7 +203,6 @@ namespace dragonspinegameengine {
             glm::sin(pitch_),
             -glm::cos(yaw_) * glm::cos(pitch_)
         );
-
     }
 
     void Camera::CalculateViewMatrix()
@@ -191,9 +215,14 @@ namespace dragonspinegameengine {
         return view_matrix_;
     }
 
+    glm::mat4x4 Camera::GetPerspectiveMatrix()
+    {
+        return glm::perspective(glm::radians(20.0f), (float) (1000 / 800), 0.1f, 100.0f);
+    }
+
     Vertex::Vertex(glm::vec3 pos)
     {
-        pos_ = glm::vec4(pos.x, pos.y, pos.z, 1.0f);
+        position_ = glm::vec4(pos.x, pos.y, pos.z, 1.0f);
     }
 
     Vertex::~Vertex()
@@ -202,12 +231,12 @@ namespace dragonspinegameengine {
 
     glm::vec4 Vertex::GetPos()
     {
-        return pos_;
+        return position_;
     }
 
     void Vertex::SetPos(glm::vec3 pos)
     {
-        pos_ = glm::vec4(pos.x, pos.y, pos.z, 1.0f);
+        position_ = glm::vec4(pos.x, pos.y, pos.z, 1.0f);
     }
 
     void Mesh::AddVertices(GLfloat* vertex_buffer_data, int vertex_buffer_data_size, int* index_buffer_data, int index_buffer_data_size)
@@ -237,29 +266,32 @@ namespace dragonspinegameengine {
         glDisableVertexAttribArray(0);
     }
 
-    RenderableObject::RenderableObject()
+    GraphicsObject::GraphicsObject()
     {
+        if(Engine::GetEngine()->GetConfig().graphics_engine_ == false)
+        {
+            error("Please enable the graphics engine before trying to use any graphics objects");
+            exit(EXIT_FAILURE);
+        }
+        mesh_ = new Mesh();
+
         translation_matrix_ = glm::mat4x4(1.0f);
         rotation_matrix_ = glm::mat4x4(1.0f);
         scale_matrix_ = glm::mat4x4(1.0f);
-        mesh_ = new Mesh();
     }
 
-    RenderableObject::RenderableObject(glm::vec3 pos, glm::vec3 rot, glm::vec3 scale)
-    {
-        mesh_ = new Mesh();
-        SetPosition(pos);
-        SetRotation(rot);
-        SetScale(scale);
-    }
-
-    void RenderableObject::SetPosition(glm::vec3 pos)
+    void GraphicsObject::SetPosition(glm::vec3 pos)
     {
         translation_matrix_ = glm::translate(pos);
         CalculateModelMatrix();
     }
 
-    void RenderableObject::SetRotation(glm::vec3 rot)
+    glm::vec3 GraphicsObject::GetPosition()
+    {
+        return position_;
+    }
+
+    void GraphicsObject::SetRotation(glm::vec3 rot)
     {
         glm::mat4x4 rx = glm::rotate(rot.x, glm::vec3(1.0,0.0,0.0));
         glm::mat4x4 ry = glm::rotate(rot.y, glm::vec3(0.0,1.0,0.0));
@@ -269,30 +301,29 @@ namespace dragonspinegameengine {
         CalculateModelMatrix();
     }
 
-    void RenderableObject::SetScale(glm::vec3 scale)
+    void GraphicsObject::SetScale(glm::vec3 scale)
     {
         scale_matrix_ = glm::scale(scale);
         CalculateModelMatrix();
     }
 
-    glm::mat4x4 RenderableObject::GetModelMatrix()
+    glm::mat4x4 GraphicsObject::GetModelMatrix()
     {
         return model_matrix_;
     }
 
-    void RenderableObject::CalculateModelMatrix()
+    void GraphicsObject::CalculateModelMatrix()
     {
         model_matrix_ = translation_matrix_ * rotation_matrix_ * scale_matrix_;
     }
 
-    Mesh* RenderableObject::GetMesh()
+    Mesh* GraphicsObject::GetMesh()
     {
         return mesh_;
     }
 
-    void RenderableObject::Render()
+    void GraphicsObject::Render()
     {
-        Engine::GetBasicShader()->SetModelMatrix(GetModelMatrix());
         GetMesh()->Draw();
     }
 }

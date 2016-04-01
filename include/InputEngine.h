@@ -6,12 +6,12 @@
 namespace dragonspinegameengine
 {
 
-    class Input
+    class InputEngine
     {
         public:
-            static Input* GetInstance();
+            static InputEngine* GetInstance();
 
-            void Update();
+            void PollInput();
 
             void CursorPosCallbackImpl(GLFWwindow* window, double cursor_x, double cursor_y);
             static void CursorPosCallback(GLFWwindow* window, double cursor_x, double cursor_y)
@@ -33,7 +33,7 @@ namespace dragonspinegameengine
         protected:
 
         private:
-            static Input* instance_;
+            static InputEngine* instance_;
 
             double cursor_prev_x_;
             double cursor_prev_y_;
@@ -42,7 +42,7 @@ namespace dragonspinegameengine
 
             bool is_cursor_bound = 0;
 
-            Input();
+            InputEngine();
     };
 
 }

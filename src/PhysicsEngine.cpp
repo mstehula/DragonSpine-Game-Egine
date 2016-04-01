@@ -1,25 +1,32 @@
+#include <stdlib.h>
+
+#include "Engine.h"
 #include "PhysicsEngine.h"
 
 namespace dragonspinegameengine
 {
-    PhysicsEngine* PhysicsEngine::instance_;
-    PhysicsEngine* PhysicsEngine::GetInstance()
-    {
-        if(instance_ == nullptr)
-        {
-            instance_ = new PhysicsEngine();
-        }
-        return instance_;
-    }
-
     PhysicsEngine::PhysicsEngine()
     {
-        //ctor
+        debug(kDebugAll, "Physics Engine ctor");
+    }
+
+    void PhysicsEngine::SimulatePhysics()
+    {
+
     }
 
     void PhysicsEngine::Simulate(PhysicsObject* physics_object)
     {
         physics_object->Simulate();
+    }
+
+    PhysicsObject::PhysicsObject()
+    {
+        if(Engine::GetEngine()->GetConfig().physics_engine_ == false)
+        {
+            error("Please enable the physics engine before trying to use any physics objects");
+            exit(EXIT_FAILURE);
+        }
     }
 
     void PhysicsObject::Simulate()
