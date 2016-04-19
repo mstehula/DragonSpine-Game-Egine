@@ -10,12 +10,12 @@
 #include <GLM/mat4x4.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include "Engine.h"
+#include "engine\Engine.h"
 #include "GraphicsEngine.h"
 #include "InputEngine.h"
 #include "Shaders.h"
 
-namespace dragonspinegameengine {
+namespace systems {
 
     GraphicsEngine::GraphicsEngine()
     {
@@ -63,7 +63,7 @@ namespace dragonspinegameengine {
 
         window_ = glfwCreateWindow(100, 100, "Testing - should be invisible", NULL, NULL);
         if(window_ == NULL){
-            debug(3, "Failed to create window");
+            engine::debug(3, "Failed to create window");
             glfwTerminate();
             exit(EXIT_FAILURE);
         }
@@ -109,16 +109,13 @@ namespace dragonspinegameengine {
     {
         if(glfwWindowShouldClose(window_) == GL_TRUE)
         {
-            Engine::GetEngine()->Stop();
+
         }
     }
 
     void GraphicsEngine::SetupShaders()
     {
-        shader_ = new Shader();
-        shader_->AddVertexShader("resources/shaders/basicVertex.vs");
-        shader_->AddFragmentShader("resources/shaders/basicFragment.fs");
-        shader_->CompileShader();
+
     }
 
     void GraphicsEngine::RegisterObject(GraphicsObject* object)
@@ -134,7 +131,6 @@ namespace dragonspinegameengine {
     void GraphicsEngine::PreRender()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        shader_->Bind();
     }
 
     void GraphicsEngine::Render()
@@ -144,9 +140,6 @@ namespace dragonspinegameengine {
 
     void GraphicsEngine::PostRender()
     {
-        if(glfwWindowShouldClose(window_) == GL_TRUE)
-                Engine::GetEngine()->Stop();
-
         glfwSwapBuffers(window_);
     }
 
@@ -278,11 +271,7 @@ namespace dragonspinegameengine {
 
     GraphicsObject::GraphicsObject()
     {
-        if(Engine::GetEngine()->GetConfig().graphics_engine_ == false)
-        {
-            error("Please enable the graphics engine before trying to use any graphics objects");
-            exit(EXIT_FAILURE);
-        }
+
         mesh_ = new Mesh();
 
         translation_matrix_ = glm::mat4x4(1.0f);

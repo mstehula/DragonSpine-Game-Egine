@@ -1,13 +1,13 @@
 #include <stdlib.h>
 
-#include "Engine.h"
+#include "engine\Engine.h"
 #include "PhysicsEngine.h"
 
 namespace dragonspinegameengine
 {
     PhysicsEngine::PhysicsEngine()
     {
-        debug(kDebugAll, "Physics Engine ctor");
+        engine::debug(engine::k_debug_all_, "Physics Engine ctor");
     }
 
     void PhysicsEngine::SimulatePhysics()
@@ -22,11 +22,7 @@ namespace dragonspinegameengine
 
     PhysicsObject::PhysicsObject()
     {
-        if(Engine::GetEngine()->GetConfig().physics_engine_ == false)
-        {
-            error("Please enable the physics engine before trying to use any physics objects");
-            exit(EXIT_FAILURE);
-        }
+
     }
 
     void PhysicsObject::Simulate()

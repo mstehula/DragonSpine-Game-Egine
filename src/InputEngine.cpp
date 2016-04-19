@@ -1,4 +1,4 @@
-#include "Engine.h"
+#include "engine\Engine.h"
 #include "InputEngine.h"
 
 namespace dragonspinegameengine
@@ -39,11 +39,11 @@ namespace dragonspinegameengine
     {
         float sensitivity = .5f;
 
-        debug(kDebugAll, "This is a buttonpress");
+        engine::debug(engine::k_debug_all_, "This is a buttonpress");
 
         // Move forward
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-            debug(kDebugAll, "Move Forward");
+            engine::debug(engine::k_debug_all_, "Move Forward");
         }
         // Move backward
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){

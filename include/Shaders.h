@@ -25,7 +25,7 @@ namespace dragonspinegameengine
             void SetPerspectiveMatrix(glm::mat4x4 perspective_matrix);
         private:
             void AddProgram(const char* shader_filename, GLenum type);
-
+            void LoadShader(const char* shader_filename, char** shader_file, int* shader_file_size);
             GLuint program_;
     };
 

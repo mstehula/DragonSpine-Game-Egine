@@ -1,3 +1,5 @@
+
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <GL/glew.h>
@@ -5,7 +7,7 @@
 #include <GLM/mat4x4.hpp>
 #include <GLM/gtc/type_ptr.hpp>
 
-#include "Engine.h"
+#include "engine\Engine.h"
 #include "Shaders.h"
 
 namespace dragonspinegameengine
@@ -17,7 +19,7 @@ namespace dragonspinegameengine
 
         if(program_ == 0)
         {
-            error("Shader creation failed");
+            engine::error("Shader creation failed");
             exit(1);
         }
     }
@@ -37,7 +39,7 @@ namespace dragonspinegameengine
             int error_buffer_size = 1024;
             char error_buffer[error_buffer_size];
             glGetProgramInfoLog(program_, error_buffer_size, &error_buffer_size, &error_buffer[0]);
-            error(error_buffer);
+            engine::error(error_buffer);
             exit(EXIT_FAILURE);
         }
 
@@ -48,7 +50,7 @@ namespace dragonspinegameengine
             int error_buffer_size = 1024;
             char error_buffer[error_buffer_size];
             glGetProgramInfoLog(program_, error_buffer_size, &error_buffer_size, &error_buffer[0]);
-            error(error_buffer);
+            engine::error(error_buffer);
             exit(EXIT_FAILURE);
         }
 
@@ -81,7 +83,7 @@ namespace dragonspinegameengine
         GLuint model_matrix_location = glGetUniformLocation(program_, "model_matrix");
         if(model_matrix_location == 0xFFFFFFFF)
         {
-            error("Could not find uniform: model matrix %d", model_matrix_location);
+            engine::error("Could not find uniform: model matrix %d", model_matrix_location);
             exit(EXIT_FAILURE);
         }
 
@@ -93,7 +95,7 @@ namespace dragonspinegameengine
         GLuint view_matrix_location = glGetUniformLocation(program_, "world_matrix");
         if(view_matrix_location == 0xFFFFFFFF)
         {
-            error("Could not find uniform: view matrix");
+            engine::error("Could not find uniform: view matrix");
             exit(EXIT_FAILURE);
         }
 
@@ -105,7 +107,7 @@ namespace dragonspinegameengine
         GLuint perspective_matrix_location = glGetUniformLocation(program_, "perspective_matrix");
         if(perspective_matrix_location == 0xFFFFFFFFF)
         {
-            error("Could not find uniform: perspective matrix");
+            engine::error("Could not find uniform: perspective matrix");
             exit(EXIT_FAILURE);
         }
 
@@ -118,11 +120,11 @@ namespace dragonspinegameengine
         GLuint shader = glCreateShader(type);
         char* shader_file;
         int shader_file_size;
-        ResourceLoader::LoadShader(shader_filename, &shader_file, &shader_file_size);
+        LoadShader(shader_filename, &shader_file, &shader_file_size);
 
         if(shader == GL_FALSE)
         {
-            error("Shader creation failed\n");
+            engine::error("Shader creation failed\n");
             exit(EXIT_FAILURE);
         }
         glShaderSource(shader, 1, &shader_file, &shader_file_size);
@@ -134,10 +136,37 @@ namespace dragonspinegameengine
             int error_buffer_size = 1024;
             char error_buffer[error_buffer_size];
             glGetShaderInfoLog(shader, error_buffer_size, &error_buffer_size, error_buffer);
-            error(error_buffer);
+            engine::error(error_buffer);
             exit(EXIT_FAILURE);
         }
 
         glAttachShader(program_, shader);
     }
+
+    void Shader::LoadShader(const char* shader_filename, char** shader_file, int* shader_file_size)
+    {
+        engine::debug(engine::k_debug_all_, "Opening shader file: %s", shader_filename);
+        FILE* shader = fopen(shader_filename, "r");
+        if(shader == nullptr)
+        {
+            engine::error("Cannot open file for shader: %s", shader_filename);
+            exit(1);
+        }
+
+        fseek(shader, 0, SEEK_END);
+        *shader_file_size = ftell(shader);
+        rewind(shader);
+
+        *shader_file = (char*) malloc(*shader_file_size * sizeof(char));
+        if(*shader_file == nullptr)
+        {
+            engine::error("malloc failed");
+            exit(EXIT_FAILURE);
+        }
+
+        fread(*shader_file, sizeof(char), *shader_file_size, shader);
+
+        fclose(shader);
+    }
+
 }

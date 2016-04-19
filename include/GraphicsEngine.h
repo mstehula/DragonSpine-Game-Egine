@@ -7,9 +7,10 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Shaders.h"
+#include "systems\ISystem.h"
 
-namespace dragonspinegameengine {
+namespace systems
+{
 
     class Camera;
     class GraphicsObject;
@@ -46,8 +47,6 @@ namespace dragonspinegameengine {
 
         Camera* aux_camera_;
         Camera* player_camera_;
-
-        Shader* shader_;
 
         int window_width_ = 1024;
         int window_height_ = 768;
@@ -113,7 +112,7 @@ namespace dragonspinegameengine {
         int index_buffer_size_;
     };
 
-    class GraphicsObject : public virtual EngineObject
+    class GraphicsObject
     {
     public:
         GraphicsObject();
