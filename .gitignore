@@ -35,5 +35,9 @@
 #html buildlog
 *.html
 
-# Folders
-lib/**
+#cmake Files & Folders
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+test
