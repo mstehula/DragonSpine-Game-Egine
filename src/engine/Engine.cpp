@@ -93,6 +93,7 @@ namespace engine {
 
             if(frame_accumulator > fps_skip_ticks)
             {
+                printf("[FPS:%d][TPS:%d]\n", frames, ticks);
                 frames = 0;
                 ticks = 0;
                 frame_accumulator -= fps_skip_ticks;
