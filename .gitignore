@@ -40,5 +40,4 @@ CMakeCache.txt
 CMakeFiles/
 Makefile
 cmake_install.cmake
-test
-bin/DebugTest bin/DODArrayTest bin/EngineTest
+bin/**
