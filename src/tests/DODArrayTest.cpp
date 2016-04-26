@@ -26,7 +26,6 @@ BOOST_AUTO_TEST_CASE(setup_default_constructor)
 BOOST_AUTO_TEST_CASE(setup_allocated_constructor)
 {
     //Test Arrays - Automatic and Dynamically allocated
-    TestArray test_array_1;
     TestArray test_array_2(256);
 
     //Testing methods - checks empty size and allocated size
