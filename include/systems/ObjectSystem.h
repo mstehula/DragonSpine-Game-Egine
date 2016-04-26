@@ -1,14 +1,14 @@
 #ifndef GAMEOBJECTFACTORY_H
 #define GAMEOBJECTFACTORY_H
 
-#include "engine\Engine.h"
-#include "engine\EngineObject.h"
+#include "engine/Engine.h"
+#include "engine/EngineObject.h"
 
-#include "systems\messages\GameMessage.h"
-#include "systems\components\Components.h"
-#include "systems\ISystem.h"
+#include "systems/messages/GameMessage.h"
+#include "systems/components/Components.h"
+#include "systems/ISystem.h"
 
-#include "util\DODArray.h"
+#include "util/DODArray.h"
 
 namespace systems
 {
@@ -37,7 +37,6 @@ namespace systems
             MeshArray mesh_;
             MotionArray physics_;
 
-            void CreateObject();
             void CreateComponent(const char* object_name, const char* file_name);
             void DestroyObject(unsigned int object_id);
     };

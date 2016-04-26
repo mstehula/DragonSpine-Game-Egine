@@ -1,12 +1,12 @@
 #ifndef WINDOW_SYSTEM_H
 #define WINDOW_SYSTEM_H
 
-#include "GL\glew.h"
-#include "GLFW\glfw3.h"
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
 
-#include "engine\Engine.h"
-#include "systems\ISystem.h"
-#include "systems\messages\GameMessage.h"
+#include "engine/Engine.h"
+#include "systems/ISystem.h"
+#include "systems/messages/GameMessage.h"
 
 namespace systems
 {

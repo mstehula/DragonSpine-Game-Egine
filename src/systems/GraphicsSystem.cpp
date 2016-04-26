@@ -1,20 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "GL\glew.h"
-#include "GLFW\glfw3.h"
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
 
-#include "glm\vec3.hpp"
-#include "glm\mat4x4.hpp"
-#include "glm\gtc\type_ptr.hpp"
-#include "glm\gtx\transform.hpp"
+#include "glm/vec3.hpp"
+#include "glm/mat4x4.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include "glm/gtx/transform.hpp"
 
-#include "engine\Engine.h"
+#include "engine/Engine.h"
 
-#include "systems\ObjectSystem.h"
-#include "systems\GraphicsSystem.h"
-#include "systems\components\Components.h"
-#include "systems\messages\GameMessage.h"
+#include "systems/ObjectSystem.h"
+#include "systems/GraphicsSystem.h"
+#include "systems/components/Components.h"
+#include "systems/messages/GameMessage.h"
 
 namespace systems
 {
@@ -27,15 +27,11 @@ namespace systems
         AddVertexShader("resources/shaders/basicVertex.vs");
         AddFragmentShader("resources/shaders/basicFragment.fs");
 
-        engine::debug(engine::k_debug_all_, "Compile shaders");
         CompileShader();
-        engine::debug(engine::k_debug_all_, "end of init for grahics!");
     }
 
     void GraphicsSystem::Update(float dt, ObjectSystem& factory)
     {
-        engine::debug(engine::k_debug_all_, "Factory pointer: %p", &factory);
-
         EngineArray objects = factory.GetObjects();
         PositionArray position = factory.GetPositions();
         MotionArray physics = factory.GetPhysics();
@@ -51,7 +47,6 @@ namespace systems
         for(unsigned int i = 0; i < objects.Size(); i++)
         {
             SetModelMatrix(glm::translate(position[i].position));
-            engine::debug(engine::k_debug_all_, "%d %p %e", objects[i].ID, &position[i], position[i].position.y);
 
             glEnableVertexAttribArray(0);
 
@@ -77,11 +72,11 @@ namespace systems
     {
         switch(msg->id)
         {
-        case messages::MessageID::ContextUpdate:
+        case 10:
             this->window_ = glfwGetCurrentContext();
             break;
         default:
-            engine::debug(engine::k_debug_warning_, "Graphics System received a message that it didn't know what to do with");
+            break;
         }
     }
 
@@ -112,11 +107,9 @@ namespace systems
         char* shader_array;
         int shader_array_size;
 
-        engine::debug(engine::k_debug_all_, "Opening shader file: %s", file_name);
         FILE* shader_file = fopen(file_name, "r");
-        if(shader_file == nullptr)
+        if(shader_file == NULL)
         {
-            engine::error("Cannot open file for shader: %s", file_name);
             exit(1);
         }
 
@@ -125,9 +118,8 @@ namespace systems
         rewind(shader_file);
 
         shader_array = (char*) malloc(shader_array_size * sizeof(char));
-        if(shader_array == nullptr)
+        if(shader_array == NULL)
         {
-            engine::error("malloc failed");
             exit(EXIT_FAILURE);
         }
 
@@ -137,7 +129,6 @@ namespace systems
 
         if(shader == GL_FALSE)
         {
-            engine::error("Shader creation failed\n");
             exit(EXIT_FAILURE);
         }
         glShaderSource(shader, 1, &shader_array, &shader_array_size);
@@ -149,7 +140,6 @@ namespace systems
             int error_buffer_size = 1024;
             char error_buffer[error_buffer_size];
             glGetShaderInfoLog(shader, error_buffer_size, &error_buffer_size, error_buffer);
-            engine::error(error_buffer);
             exit(EXIT_FAILURE);
         }
 
@@ -158,21 +148,17 @@ namespace systems
 
     void GraphicsSystem::CompileShader()
     {
-        engine::debug(engine::k_debug_all_, "Link");
         GLint function_return_value;
         glLinkProgram(program_);
         glGetProgramiv(program_, GL_LINK_STATUS, &function_return_value);
         if(function_return_value == GL_FALSE)
         {
-            engine::debug(engine::k_debug_all_, "Link Failure");
             int error_buffer_size = 1024;
             char error_buffer[error_buffer_size];
             glGetProgramInfoLog(program_, error_buffer_size, &error_buffer_size, &error_buffer[0]);
-            engine::error(error_buffer);
             exit(EXIT_FAILURE);
         }
 
-        engine::debug(engine::k_debug_all_, "Validate");
         glValidateProgram(program_);
         glGetProgramiv(program_, GL_VALIDATE_STATUS, &function_return_value);
         if(function_return_value == GL_FALSE)
@@ -180,11 +166,9 @@ namespace systems
             int error_buffer_size = 1024;
             char error_buffer[error_buffer_size];
             glGetProgramInfoLog(program_, error_buffer_size, &error_buffer_size, &error_buffer[0]);
-            engine::error(error_buffer);
             exit(EXIT_FAILURE);
         }
 
-        engine::debug(engine::k_debug_all_, "Detach");
         GLuint shaders[20];
         GLsizei count;
         glGetAttachedShaders(program_, 20, &count, shaders);
@@ -199,7 +183,6 @@ namespace systems
         GLuint model_matrix_location = glGetUniformLocation(program_, "model_matrix");
         if(model_matrix_location == 0xFFFFFFFF)
         {
-            engine::error("Could not find uniform: model matrix %d", model_matrix_location);
             exit(EXIT_FAILURE);
         }
 
@@ -211,7 +194,6 @@ namespace systems
         GLuint view_matrix_location = glGetUniformLocation(program_, "world_matrix");
         if(view_matrix_location == 0xFFFFFFFF)
         {
-            engine::error("Could not find uniform: view matrix");
             exit(EXIT_FAILURE);
         }
 
@@ -223,7 +205,6 @@ namespace systems
         GLuint perspective_matrix_location = glGetUniformLocation(program_, "perspective_matrix");
         if(perspective_matrix_location == 0xFFFFFFFFF)
         {
-            engine::error("Could not find uniform: perspective matrix");
             exit(EXIT_FAILURE);
         }
 

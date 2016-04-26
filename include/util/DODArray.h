@@ -10,18 +10,22 @@ namespace util
     class DODArray
     {
     private:
-        size_t current_size = 0;
-        size_t min_size = 128;
-        size_t allocated_size = 128;
+        size_t current_size;
+        size_t min_size;
+        size_t allocated_size;
 
-    public:
         T* elements;
+    public:
         DODArray()
         {
+            current_size = 0;
+            min_size = 128;
+            allocated_size = 128;
             elements = new T[allocated_size];
         }
         DODArray(size_t size)
         {
+            current_size = 0;
             min_size = size;
             allocated_size = min_size;
             elements = new T[allocated_size];
@@ -30,7 +34,7 @@ namespace util
 
         virtual ~DODArray()
         {
-            free(elements);
+            delete elements;
         }
 
         T& operator[](int i)
@@ -48,10 +52,8 @@ namespace util
             return allocated_size;
         }
 
-        int Add()
+        int Add(T* object)
         {
-            engine::debug(engine::k_debug_all_, "Resizing %p", &elements);
-
             if(current_size + 1 == allocated_size)
             {
                 T* temp = new T[allocated_size * 2];
@@ -60,6 +62,8 @@ namespace util
                 delete[] elements;
                 elements = temp;
             }
+
+            memcpy(&elements[current_size], object, sizeof(T));
 
             return current_size++;
         }

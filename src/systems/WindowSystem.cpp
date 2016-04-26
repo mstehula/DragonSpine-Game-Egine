@@ -1,8 +1,8 @@
 
 #include <stdlib.h>
 
-#include "engine\Engine.h"
-#include "systems\WindowSystem.h"
+#include "engine/Engine.h"
+#include "systems/WindowSystem.h"
 
 namespace systems
 {
@@ -10,7 +10,6 @@ namespace systems
     {
         if(!glfwInit())
         {
-            engine::error("Error initializing glfw");
             exit(EXIT_FAILURE);
         }
 
@@ -23,7 +22,6 @@ namespace systems
 
         GLFWwindow* window_ = glfwCreateWindow(800, 600, "Testing - DragonSpine Game Engine", NULL, NULL);
         if(window_ == NULL){
-            engine::error("Failed to create window");
             glfwTerminate();
             exit(EXIT_FAILURE);
         }
@@ -31,7 +29,6 @@ namespace systems
         glfwMakeContextCurrent(window_);
         glewExperimental=true; // Needed in core profile
         if(glewInit() != GLEW_OK) {
-            engine::error("Failed to initialize GLEW\n");
             exit(EXIT_FAILURE);
         }
 

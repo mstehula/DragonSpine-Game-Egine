@@ -1,7 +1,7 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-#include "engine\EngineObject.h"
+#include "engine/EngineObject.h"
 #include "messages/GameMessage.h"
 
 namespace systems

@@ -1,6 +1,0 @@
-///TEST CLASS FOR DRAGON SPINE GAME ENGINE
-
-#ifndef MAIN_H
-#define MAIN_H
-
-#endif // MAIN_H

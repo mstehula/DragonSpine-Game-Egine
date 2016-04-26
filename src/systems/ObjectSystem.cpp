@@ -3,10 +3,11 @@
 
 #include <vector>
 
-#include "engine\Engine.h"
-#include "engine\EngineObject.h"
+#include "engine/Engine.h"
+#include "engine/EngineObject.h"
 
-#include "systems\ObjectSystem.h"
+#include "systems/ObjectSystem.h"
+#include "systems/components/Components.h"
 
 namespace systems
 {
@@ -40,31 +41,27 @@ namespace systems
             7,2,6
         };
 
-        engine::debug(engine::k_debug_all_, "Setting Object ID");
+        engine::EngineObject engine_object;
+        struct components::PositionComponent position_component;
+        struct components::MeshComponent mesh_component;
 
-        CreateObject();
-        engine::debug(engine::k_debug_all_, "objects_[0].ID = %d", objects_[0].ID);
-        objects_[0].ID = 100000;
-        engine::debug(engine::k_debug_all_, "objects_[0].ID = %d", objects_[0].ID);
-        engine::debug(engine::k_debug_all_, "objects size %d", objects_.Size());
+        engine_object.ID = 100000;
+        objects_.Add(&engine_object);
 
-        engine::debug(engine::k_debug_all_, "Loading vertex buffer");
+        position_component.position = glm::vec3(0.0,2.0,0.0);
+        positions_.Add(&position_component);
 
-        positions_[0].position = glm::vec3(0.0,2.0,0.0);
-
-        mesh_[0].vertex_buffer_size = sizeof(vertex_buffer_data);
+        mesh_component.vertex_buffer_size = sizeof(vertex_buffer_data);
         glGenBuffers(1, &mesh_[0].vertex_buffer_object);
         glBindBuffer(GL_ARRAY_BUFFER, mesh_[0].vertex_buffer_object);
         glBufferData(GL_ARRAY_BUFFER, mesh_[0].vertex_buffer_size, vertex_buffer_data, GL_STATIC_DRAW);
 
-        engine::debug(engine::k_debug_all_, "Loading index buffer");
-
-        mesh_[0].index_buffer_size = sizeof(index_buffer_data);
+        mesh_component.index_buffer_size = sizeof(index_buffer_data);
         glGenBuffers(1, &mesh_[0].index_buffer_object);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_[0].index_buffer_object);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh_[0].index_buffer_size, index_buffer_data, GL_STATIC_DRAW);
 
-        engine::debug(engine::k_debug_all_, "Pushing mesh to buffer");
+        mesh_.Add(&mesh_component);
     }
 
     void ObjectSystem::Update(float dt, ObjectSystem& factory)
@@ -80,14 +77,6 @@ namespace systems
     void ObjectSystem::SendMessageAsync(messages::GameMessage* msg)
     {
 
-    }
-
-    void ObjectSystem::CreateObject()
-    {
-        objects_.Add();
-        positions_.Add();
-        mesh_.Add();
-        physics_.Add();
     }
 
     void ObjectSystem::CreateComponent(const char* object_name, const char* file_name)

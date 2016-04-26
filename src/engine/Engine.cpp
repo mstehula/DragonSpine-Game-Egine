@@ -1,7 +1,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <vector>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -12,7 +11,7 @@ namespace engine {
 
     Engine::Engine()
     {
-
+        running_ = false;
     }
 
     Engine::~Engine()
@@ -34,8 +33,6 @@ namespace engine {
         if(running_) return;
         running_ = true;
 
-        engine::debug(engine::k_debug_all_, "Engine starting");
-
         this->Init();
         this->Run();
     }
@@ -53,8 +50,6 @@ namespace engine {
 
     void Engine::Stop()
     {
-        engine::debug(engine::k_debug_all_, "This is the exit");
-
         if(!running_) return;
         running_ = false;
     }
@@ -98,7 +93,6 @@ namespace engine {
 
             if(frame_accumulator > fps_skip_ticks)
             {
-                debug(k_debug_all_, "FPS:[%d] TPS:[%d], OBJ FACT SIZE ", frames, ticks);
                 frames = 0;
                 ticks = 0;
                 frame_accumulator -= fps_skip_ticks;
@@ -106,51 +100,12 @@ namespace engine {
 
             if(!glfwGetCurrentContext())
             {
-                engine::error("Cannot get current context, exiting");
                 Stop();
             }
             else if(glfwWindowShouldClose(glfwGetCurrentContext()))
             {
-                engine::debug(engine::k_debug_all_, "Window should be closing now!");
                 Stop();
             }
         }
-
-        engine::debug(engine::k_debug_all_, "Ending");
     }
-
-    int game_debug_level_ = k_debug_all_;
-
-    //Prints out char* output if debug_level is less then the current
-    //game debug_level
-    void debug(int debug_level, const char * format, ...)
-    {
-        if(debug_level <= game_debug_level_)
-        {
-            va_list argptr;
-            va_start(argptr, format);
-            fprintf(stdout, "[%c][%f] ", debug_symbol_table_[debug_level], glfwGetTime());
-            vfprintf(stdout, format, argptr);
-            fprintf(stdout, "\n");
-            va_end(argptr);
-        }
-    }
-
-    //Prints out the char* output to stderr
-    void error(const char* format, ...)
-    {
-        va_list argptr;
-        va_start(argptr, format);
-        fprintf(stdout, "[E][%f] ", glfwGetTime());
-        vfprintf(stdout, format, argptr);
-        fprintf(stdout, "\n");
-        va_end(argptr);
-    }
-
-    //Sets debug level of the program - changed most notibly in the command line
-    void setDebugLevel(int debug_level)
-    {
-        game_debug_level_ = debug_level;
-    }
-
 }
