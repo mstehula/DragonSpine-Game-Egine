@@ -48,25 +48,25 @@ namespace systems
         engine_object.ID = 100000;
         objects_.Add(engine_object);
 
-        position_component.position = glm::vec3(0.0,2.0,0.0);
+        position_component.position = glm::vec3(0.0,0.0,0.0);
         positions_.Add(position_component);
 
         mesh_component.vertex_buffer_size = sizeof(vertex_buffer_data);
-        glGenBuffers(1, &mesh_[0].vertex_buffer_object);
-        glBindBuffer(GL_ARRAY_BUFFER, mesh_[0].vertex_buffer_object);
-        glBufferData(GL_ARRAY_BUFFER, mesh_[0].vertex_buffer_size, vertex_buffer_data, GL_STATIC_DRAW);
+        glGenBuffers(1, &(mesh_component.vertex_buffer_object));
+        glBindBuffer(GL_ARRAY_BUFFER, mesh_component.vertex_buffer_object);
+        glBufferData(GL_ARRAY_BUFFER, mesh_component.vertex_buffer_size, vertex_buffer_data, GL_STATIC_DRAW);
 
         mesh_component.index_buffer_size = sizeof(index_buffer_data);
-        glGenBuffers(1, &mesh_[0].index_buffer_object);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_[0].index_buffer_object);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh_[0].index_buffer_size, index_buffer_data, GL_STATIC_DRAW);
+        glGenBuffers(1, &(mesh_component.index_buffer_object));
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_component.index_buffer_object);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh_component.index_buffer_size, index_buffer_data, GL_STATIC_DRAW);
 
         mesh_.Add(mesh_component);
     }
 
     void ObjectSystem::Update(float dt, ObjectSystem& factory)
     {
-        
+
     }
 
     void ObjectSystem::SendMessageSync(messages::GameMessage* msg)
