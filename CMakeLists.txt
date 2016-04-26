@@ -8,6 +8,7 @@ set(PROJECT_BINARY_DIR ${CMAKE_SOURCE_DIR}/obj)
 
 add_definitions(-DBOOST_LOG_DYN_LINK)
 add_definitions(-DBOOST_TEST_DYN_LINK)
+add_definitions(-g)
 
 find_package(X11)
 find_package(OpenGL REQUIRED)
@@ -24,6 +25,7 @@ set(INCLUDE_DIRS
 )
 
 set(TEST_DIR ${PROJECT_SOURCE_DIR}/tests)
+set(UTIL_DIR ${PROJECT_SOURCE_DIR}/util)
 
 set(ENGINE_DIR ${PROJECT_SOURCE_DIR}/engine)
 set(ENGINE_SOURCES
@@ -70,5 +72,5 @@ add_custom_target(tests)
 add_executable(EngineTest ${TEST_DIR}/EngineTest.cpp ${ENGINE_DEPENDS})
 add_dependencies(tests EngineTest)
 
-add_executable(DODArrayTest ${ENGINE_DEPENDS} ${TEST_DIR}/DODArrayTest.cpp)
+add_executable(DODArrayTest ${TEST_DIR}/DODArrayTest.cpp)
 add_dependencies(tests DODArrayTest)
