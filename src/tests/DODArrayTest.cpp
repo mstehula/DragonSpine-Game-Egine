@@ -102,6 +102,9 @@ BOOST_AUTO_TEST_CASE(one_item_default_dynamic)
     BOOST_CHECK(test_array_3->AllocatedSize() == 128);
     BOOST_CHECK(test_struct_3_index == 0);
     BOOST_CHECK((*test_array_3)[test_struct_3_index].id == test_struct_3->id);
+
+    delete test_array_3;
+    delete test_struct_3;
 }
 
 BOOST_AUTO_TEST_CASE(one_item_allocated_dynamic)
@@ -116,4 +119,7 @@ BOOST_AUTO_TEST_CASE(one_item_allocated_dynamic)
     BOOST_CHECK(test_array_4->AllocatedSize() == 256);
     BOOST_CHECK(test_struct_4_index == 0);
     BOOST_CHECK((*test_array_4)[test_struct_4_index].id == test_struct_4->id);
+
+    delete test_array_4;
+    delete test_struct_4;
 }
