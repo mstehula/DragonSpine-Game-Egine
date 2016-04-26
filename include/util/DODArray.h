@@ -81,7 +81,6 @@ namespace util
         **/
         void Delete(int i)
         {
-            T object_to_delete = elements[i];
             current_size -= 1;
             if(current_size > 0)
             {
