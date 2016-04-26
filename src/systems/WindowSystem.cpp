@@ -1,6 +1,9 @@
 
 #include <stdlib.h>
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 #include "engine/Engine.h"
 #include "systems/WindowSystem.h"
 
@@ -36,7 +39,9 @@ namespace systems
         glGenVertexArrays(1, &VertexArrayID);
         glBindVertexArray(VertexArrayID);
 
-        glClearColor(.2f, .2f, .2f, 1.0f);
+        glfwSwapInterval(0);
+
+        glClearColor(.5f, .5f, .5f, 1.0f);
     }
 
     void WindowSystem::Update(float dt, ObjectSystem& factory)
