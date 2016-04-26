@@ -46,10 +46,10 @@ namespace systems
         struct components::MeshComponent mesh_component;
 
         engine_object.ID = 100000;
-        objects_.Add(&engine_object);
+        objects_.Add(engine_object);
 
         position_component.position = glm::vec3(0.0,2.0,0.0);
-        positions_.Add(&position_component);
+        positions_.Add(position_component);
 
         mesh_component.vertex_buffer_size = sizeof(vertex_buffer_data);
         glGenBuffers(1, &mesh_[0].vertex_buffer_object);
@@ -61,7 +61,7 @@ namespace systems
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_[0].index_buffer_object);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh_[0].index_buffer_size, index_buffer_data, GL_STATIC_DRAW);
 
-        mesh_.Add(&mesh_component);
+        mesh_.Add(mesh_component);
     }
 
     void ObjectSystem::Update(float dt, ObjectSystem& factory)
