@@ -101,20 +101,45 @@ BOOST_AUTO_TEST_CASE(large_item_default)
     TestStruct test_struct;
     int test_struct_index;
 
-    for(int i = 0; i < 129; i++)
+    for(int i = 0; i < 200; i++)
     {
         test_struct.id = i;
         test_array.Add(test_struct);
     }
 
-    BOOST_CHECK(test_array.Size() == 129);
+    BOOST_CHECK(test_array.Size() == 200);
     BOOST_CHECK(test_array.AllocatedSize() == 256);
 
-    size_t size = test_array.Size();
-    for (size_t i = 0; i < size; i++) {
+    for(int i = 0; i < 200; i++)
+    {
+        BOOST_CHECK(test_array[i].id == i);
+    }
+
+    for(int i = 0; i < 200; i++) {
         test_array.Delete(0);
     }
 
     BOOST_CHECK(test_array.Size() == 0);
     BOOST_CHECK(test_array.AllocatedSize() == 128);
+}
+
+BOOST_AUTO_TEST_CASE(loop_test_default)
+{
+    TestArray test_array;
+    TestStruct test_struct;
+    int test_struct_index;
+
+    for(int i = 0; i < 1000; i++)
+    {
+        test_struct.id = i;
+        test_array.Add(test_struct);
+    }
+
+    for(int j = 0; j < 100; j++)
+    {
+        for(int i = 0; i < test_array.Size(); i++)
+        {
+            BOOST_CHECK(test_array[i].id == i);
+        }
+    }
 }

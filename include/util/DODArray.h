@@ -58,7 +58,7 @@ namespace util
             if(current_size + 1 == allocated_size)
             {
                 T* temp = (T*) malloc(allocated_size * 2 * sizeof(T));
-                memcpy(temp, elements, current_size);
+                memcpy(temp, elements, current_size * sizeof(T));
                 allocated_size *= 2;
                 free(elements);
                 elements = temp;
@@ -91,7 +91,7 @@ namespace util
             {
                 T* temp = (T*) malloc(allocated_size / 2 * sizeof(T));
                 allocated_size /= 2;
-                memcpy(temp, elements, current_size);
+                memcpy(temp, elements, current_size * sizeof(T)) ;
                 free(elements);
                 elements = temp;
             }

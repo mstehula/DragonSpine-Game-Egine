@@ -66,7 +66,7 @@ namespace systems
 
     void ObjectSystem::Update(float dt, ObjectSystem& factory)
     {
-
+        printf("Hello! I am updating the object factory!\n");
     }
 
     void ObjectSystem::SendMessageSync(messages::GameMessage* msg)

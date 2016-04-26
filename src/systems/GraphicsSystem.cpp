@@ -32,10 +32,12 @@ namespace systems
 
     void GraphicsSystem::Update(float dt, ObjectSystem& factory)
     {
-        EngineArray objects = factory.GetObjects();
-        PositionArray position = factory.GetPositions();
-        MotionArray physics = factory.GetPhysics();
-        MeshArray meshes = factory.GetMeshes();
+        EngineArray& objects = factory.GetObjects();
+        PositionArray& position = factory.GetPositions();
+        MotionArray& physics = factory.GetPhysics();
+        MeshArray& meshes = factory.GetMeshes();
+
+        printf("Objects.size() == %d, object.id == %d\n", objects.Size(), objects[0].ID);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
