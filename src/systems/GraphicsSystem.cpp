@@ -34,7 +34,7 @@ namespace systems
     {
         EngineArray& objects = factory.GetObjects();
         PositionArray& position = factory.GetPositions();
-        MotionArray& physics = factory.GetPhysics();
+        MotionArray& motion = factory.GetMotion();
         MeshArray& meshes = factory.GetMeshes();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

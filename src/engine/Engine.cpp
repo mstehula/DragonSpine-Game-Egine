@@ -23,6 +23,7 @@ namespace engine {
     {
         window_input_system_.Init();
         object_system_.Init();
+        physics_system_.Init();
         graphics_system_.Init();
     }
 
@@ -39,8 +40,9 @@ namespace engine {
 
     void Engine::Tick(float dt)
     {
-        object_system_.Update(dt, object_system_);
         window_input_system_.Update(dt, object_system_);
+        object_system_.Update(dt, object_system_);
+        physics_system_.Update(dt, object_system_);
     }
 
     void Engine::Render(float dt)

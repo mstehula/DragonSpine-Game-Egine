@@ -1,7 +1,6 @@
 #ifndef GAMEOBJECTFACTORY_H
 #define GAMEOBJECTFACTORY_H
 
-#include "engine/Engine.h"
 #include "engine/EngineObject.h"
 
 #include "systems/messages/GameMessage.h"
@@ -28,14 +27,13 @@ namespace systems
 
             EngineArray& GetObjects() { return objects_; }
             PositionArray& GetPositions() { return positions_; }
-            MotionArray& GetPhysics() { return physics_; }
-            MeshArray& GetMeshes() { return mesh_; }
+            MotionArray& GetMotion() { return motion_; }
+            MeshArray& GetMeshes() { return meshes_; }
         private:
             EngineArray objects_;
-
             PositionArray positions_;
-            MeshArray mesh_;
-            MotionArray physics_;
+            MotionArray motion_;
+            MeshArray meshes_;
 
             void CreateComponent(const char* object_name, const char* file_name);
             void DestroyObject(unsigned int object_id);

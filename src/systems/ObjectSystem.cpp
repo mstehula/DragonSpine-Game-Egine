@@ -43,6 +43,7 @@ namespace systems
 
         engine::EngineObject engine_object;
         struct components::PositionComponent position_component;
+        struct components::MotionComponent motion_component;
         struct components::MeshComponent mesh_component;
 
         engine_object.ID = 100000;
@@ -50,6 +51,10 @@ namespace systems
 
         position_component.position = glm::vec3(0.0,0.0,0.0);
         positions_.Add(position_component);
+
+        motion_component.linear_velocity = glm::vec3(0.0, 5.0, 0.0);
+        motion_component.linear_acceleration = glm::vec3(0.0, -9.8, 0.0);
+        motion_.Add(motion_component);
 
         mesh_component.vertex_buffer_size = sizeof(vertex_buffer_data);
         glGenBuffers(1, &(mesh_component.vertex_buffer_object));
@@ -61,7 +66,7 @@ namespace systems
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_component.index_buffer_object);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh_component.index_buffer_size, index_buffer_data, GL_STATIC_DRAW);
 
-        mesh_.Add(mesh_component);
+        meshes_.Add(mesh_component);
     }
 
     void ObjectSystem::Update(float dt, ObjectSystem& factory)

@@ -36,6 +36,7 @@ set(SYSTEMS_DIR ${PROJECT_SOURCE_DIR}/systems)
 set(SYSTEMS_SOURCES
     "${SYSTEMS_DIR}/GraphicsSystem.cpp"
     "${SYSTEMS_DIR}/ObjectSystem.cpp"
+    "${SYSTEMS_DIR}/PhysicsSystem.cpp"
     "${SYSTEMS_DIR}/WindowSystem.cpp"
 )
 

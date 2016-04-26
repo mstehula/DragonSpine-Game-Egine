@@ -1,6 +1,8 @@
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
+#include <GL/glew.h>
+
 #include "glm/vec3.hpp"
 
 namespace components
@@ -32,33 +34,10 @@ namespace components
 
     struct MotionComponent
     {
-        struct
-        {
-            float dx;
-            float dy;
-            float dz;
-        } linear_velocity;
-
-        struct
-        {
-            float ddx;
-            float ddy;
-            float ddz;
-        } linear_acceleration;
-
-        struct
-        {
-            float drx;
-            float dry;
-            float drz;
-        } rotational_velocity;
-
-        struct
-        {
-            float ddrx;
-            float ddry;
-            float ddrz;
-        } rotational_acceleration;
+        glm::vec3 linear_velocity;
+        glm::vec3 linear_acceleration;
+        glm::vec3 rotational_velocity;
+        glm::vec3 rotational_acceleration;
     };
 
     struct CollisionComponent
