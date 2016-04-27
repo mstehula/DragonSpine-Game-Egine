@@ -6,6 +6,7 @@
 
 #include "glm/vec3.hpp"
 #include "glm/mat4x4.hpp"
+#include "glm/gtc/quaternion.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/transform.hpp"
 
@@ -46,7 +47,9 @@ namespace systems
 
         for(unsigned int i = 0; i < objects.Size(); i++)
         {
-            SetModelMatrix(glm::translate(position[i].position));
+            glm::mat4x4 rotation_matrix = glm::mat4_cast(glm::quat(position[i].rotation));
+            glm::mat4x4 translation_matrix = glm::translate(position[i].position);
+            SetModelMatrix(rotation_matrix * translation_matrix);
 
             glEnableVertexAttribArray(0);
 

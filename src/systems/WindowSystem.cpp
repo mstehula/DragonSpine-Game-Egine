@@ -39,6 +39,9 @@ namespace systems
         glGenVertexArrays(1, &VertexArrayID);
         glBindVertexArray(VertexArrayID);
 
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+
         glfwSwapInterval(0);
 
         glClearColor(.5f, .5f, .5f, 1.0f);

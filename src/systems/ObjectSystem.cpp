@@ -50,19 +50,21 @@ namespace systems
         objects_.Add(engine_object);
 
         position_component.position = glm::vec3(0.0,0.0,0.0);
+        position_component.rotation = glm::vec3(0.0,0.5,0.0);
         positions_.Add(position_component);
 
-        motion_component.linear_velocity = glm::vec3(0.0, 5.0, 0.0);
-        motion_component.linear_acceleration = glm::vec3(0.0, -9.8, 0.0);
+        motion_component.linear_velocity = glm::vec3(0.0, .5, 0.0);
+        motion_component.linear_acceleration = glm::vec3(0.0, -.1, 0.0);
+        motion_component.rotational_velocity = glm::vec3(0.0, 1.0, 0.0);
         motion_.Add(motion_component);
 
         mesh_component.vertex_buffer_size = sizeof(vertex_buffer_data);
-        glGenBuffers(1, &(mesh_component.vertex_buffer_object));
+        glGenBuffers(1, &mesh_component.vertex_buffer_object);
         glBindBuffer(GL_ARRAY_BUFFER, mesh_component.vertex_buffer_object);
         glBufferData(GL_ARRAY_BUFFER, mesh_component.vertex_buffer_size, vertex_buffer_data, GL_STATIC_DRAW);
 
         mesh_component.index_buffer_size = sizeof(index_buffer_data);
-        glGenBuffers(1, &(mesh_component.index_buffer_object));
+        glGenBuffers(1, &mesh_component.index_buffer_object);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_component.index_buffer_object);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh_component.index_buffer_size, index_buffer_data, GL_STATIC_DRAW);
 
